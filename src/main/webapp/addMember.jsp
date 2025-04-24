@@ -254,7 +254,7 @@
             <button class="btn">FILTER</button>
             <button class="btn">ADD MEMBER</button>
             <button class="btn">INVITE</button>
-            <button class="btn">PRINT</button>
+     
             <button class="btn">EXPORT</button>
         </div>
         
