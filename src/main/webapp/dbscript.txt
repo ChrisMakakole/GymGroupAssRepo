@@ -1,0 +1,125 @@
+-- Database: gym_management
+
+CREATE DATABASE IF NOT EXISTS gym_management;
+USE gym_management;
+
+-- Table for Administrators
+CREATE TABLE IF NOT EXISTS admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL -- Consider using password hashing
+);
+
+-- Table for Gym Packages
+CREATE TABLE IF NOT EXISTS packages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    duration_days INT NOT NULL
+);
+
+-- Modified Table for Gym Members (Users)
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(20) UNIQUE,
+    membership_start_date DATE,
+    membership_end_date DATE
+);
+
+-- Table for Trainers
+CREATE TABLE IF NOT EXISTS trainers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialization VARCHAR(100)
+);
+
+-- Table for Payments
+CREATE TABLE IF NOT EXISTS payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    package_id INT NOT NULL,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_type VARCHAR(50), -- e.g., Cash, Credit Card
+    recurring BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (package_id) REFERENCES packages(id)
+);
+
+-- Table for Attendance
+CREATE TABLE IF NOT EXISTS attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    attendance_date DATE NOT NULL,
+    check_in_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    check_out_time TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    UNIQUE KEY unique_attendance (user_id, attendance_date) -- Prevent duplicate entries for a user on the same day
+);
+
+-- Table for Shifts (if you need to manage trainer schedules or class times)
+CREATE TABLE IF NOT EXISTS shifts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    day_of_week VARCHAR(10) -- e.g., Monday, Tue, Wed
+);
+
+-- Table to link Trainers to Shifts (many-to-many relationship)
+CREATE TABLE IF NOT EXISTS trainer_shifts (
+    trainer_id INT NOT NULL,
+    shift_id INT NOT NULL,
+    PRIMARY KEY (trainer_id, shift_id),
+    FOREIGN KEY (trainer_id) REFERENCES trainers(id),
+    FOREIGN KEY (shift_id) REFERENCES shifts(id)
+);
+
+
+INSERT INTO admins (username, password) VALUES
+('admin', 'password123'); 
+
+INSERT INTO packages (name, description, price, duration_days) VALUES
+('Basic Monthly', 'Access to gym facilities during operating hours.', 50.00, 30),
+('Premium Annual', 'Full access, including classes and personal training session each month.', 500.00, 365),
+('3-Month Special', 'Discounted access for three months.', 135.00, 90),
+('Student Discount (Monthly)', 'Reduced price for students with valid ID.', 40.00, 30);
+
+INSERT INTO users (name, email, phone, membership_start_date, membership_end_date) VALUES
+('John Doe', 'john.doe@example.com', '123-456-7890', '2025-04-20', '2025-05-20'),
+('Jane Smith', 'jane.smith@example.com', '987-654-3210', '2024-12-01', '2025-11-30'),
+('Peter Jones', 'peter.jones@example.com', '555-123-4567', '2025-04-15', '2025-07-15'),
+('Alice Brown', 'alice.brown@example.com', '111-222-3333', '2025-04-24', '2025-05-24');
+
+INSERT INTO trainers (name, specialization) VALUES
+('Michael Johnson', 'Strength Training'),
+('Sarah Williams', 'Yoga & Pilates'),
+('David Lee', 'Cardio & Fitness'),
+('Emily Carter', 'Personal Training');
+
+INSERT INTO payments (user_id, package_id, amount, payment_type, recurring) VALUES
+(1, 1, 50.00, 'Credit Card', FALSE),
+(2, 2, 500.00, 'Bank Transfer', FALSE),
+(3, 3, 135.00, 'Cash', FALSE),
+(1, 1, 50.00, 'Credit Card', TRUE),
+(4, 1, 40.00, 'Cash', FALSE);
+
+INSERT INTO attendance (user_id, attendance_date, check_in_time, check_out_time) VALUES
+(1, '2025-04-21', '09:00:00', '10:30:00'),
+(2, '2025-04-21', '17:00:00', '18:15:00'),
+(1, '2025-04-22', '10:00:00', '11:45:00'),
+(3, '2025-04-22', '12:30:00', '13:30:00'),
+(4, '2025-04-24', '14:00:00', NULL);
+
+INSERT INTO trainer_shifts (trainer_id, shift_id) VALUES
+(1, 2), -- Michael Johnson (Strength Training) takes 'Evening Strength Training'
+(2, 1), -- Sarah Williams (Yoga & Pilates) takes 'Morning Yoga'
+(2, 4), -- Sarah Williams also takes 'Morning Pilates'
+(3, 3), -- David Lee (Cardio & Fitness) takes 'Mid-day Cardio'
+(4, 4), -- Emily Carter (Personal Training) might be available during 'Morning Pilates'
+(1, 9); -- Michael Johnson also takes 'Morning Strength Training'
+
+
