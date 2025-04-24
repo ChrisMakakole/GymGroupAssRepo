@@ -4,284 +4,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gymdesk - Members</title>
+    <title>Gymdesk - Visitor/Member Sign-up</title>
     <style>
         :root {
             --primary-color: #3498db;
-            --dark-color: #2c3e50;
-            --darker-color: #34495e;
-            --light-gray: #f8f9fa;
-            --medium-gray: #7f8c8d;
-            --border-gray: #ddd;
+            --border-color: #ddd;
+            --required-color: #e74c3c;
+            --section-border: #eee;
         }
         
         * {
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-gray);
+            background-color: #f8f9fa;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             color: #333;
             line-height: 1.5;
         }
         
         .container {
-            padding: 15px;
-            max-width: 1400px;
+            max-width: 800px;
             margin: 0 auto;
-        }
-        
-        /* Top Navigation */
-        .top-nav {
-            display: flex;
-            background-color: var(--dark-color);
+            background-color: white;
             border-radius: 8px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        .top-nav::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .nav-item {
-            padding: 12px 15px;
-            color: white;
-            cursor: pointer;
-            text-align: center;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        
-        .nav-item.active {
-            background-color: var(--darker-color);
-            border-bottom: 3px solid var(--primary-color);
-        }
-        
-        /* Header */
-        .header {
-            margin-bottom: 20px;
-        }
-        
-        .page-title {
+        h1 {
             font-size: 24px;
-            font-weight: bold;
-            margin: 0;
-        }
-        
-        .member-name {
-            font-size: 16px;
-            color: var(--medium-gray);
-            margin: 5px 0 0 0;
-        }
-        
-        /* Search and Action Buttons */
-        .search-bar {
-            display: flex;
-            margin-bottom: 15px;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid var(--border-gray);
-            border-radius: 4px;
-            font-size: 14px;
-            min-width: 0;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid var(--border-gray);
-            background-color: white;
-            cursor: pointer;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-        }
-        
-        /* Members Container */
-        .members-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .members-header {
-            margin-bottom: 20px;
-        }
-        
-        .members-title {
-            font-size: 18px;
-            font-weight: 500;
-            margin: 0;
-        }
-        
-        /* Help Card */
-        .help-card {
-            background-color: var(--light-gray);
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            border-left: 4px solid var(--primary-color);
-        }
-        
-        .help-title {
-            font-weight: 500;
             margin-top: 0;
-            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        h2 {
             font-size: 18px;
+            margin: 25px 0 15px 0;
+            color: #2c3e50;
         }
         
-        .help-options {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 15px;
-        }
-        
-        @media (min-width: 768px) {
-            .help-options {
-                flex-direction: row;
-            }
-        }
-        
-        .help-option {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .help-option-title {
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-        
-        .help-option-desc {
-            color: var(--medium-gray);
+        .required-label {
             font-size: 14px;
-            margin-bottom: 10px;
+            color: var(--required-color);
+            margin-bottom: 15px;
+            display: block;
         }
         
-        /* Responsive adjustments */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .add-option {
+            color: var(--primary-color);
+            font-size: 14px;
+            margin-top: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .add-option::before {
+            content: "+";
+            font-weight: bold;
+        }
+        
+        .check-in-code {
+            font-size: 18px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        .divider {
+            border-top: 1px solid var(--section-border);
+            margin: 30px 0;
+        }
+        
+        .address-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .address-grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
         @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .nav-item {
-                padding: 10px 12px;
-                font-size: 14px;
-            }
-            
-            .page-title {
-                font-size: 20px;
-            }
-            
-            .member-name {
-                font-size: 14px;
-            }
-            
-            .action-buttons .btn {
-                flex: 1 0 calc(50% - 5px);
-                padding: 8px 5px;
-                font-size: 13px;
-            }
-            
-            .members-container {
-                padding: 15px;
-            }
-            
-            .help-card {
-                padding: 15px;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .action-buttons .btn {
-                flex: 1 0 100%;
+            .address-grid, .address-grid-2col {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Top Navigation -->
-        <div class="top-nav">
-            <div class="nav-item active">Members</div>
-            <div class="nav-item">Check-In</div>
-            <div class="nav-item">Attendance</div>
-            <div class="nav-item">Memberships</div>
-            <div class="nav-item">Rosters</div>
-            <div class="nav-item">Documents</div>
-            <div class="nav-item">Content</div>
-            <div class="nav-item">Growth</div>
-            <div class="nav-item">Settings</div>
-        </div>
+        <h1>Visitor / Member Sign-up</h1>
         
-        <!-- Header with Member Name -->
-        <div class="header">
-            <div>
-                <h1 class="page-title">Members</h1>
-                <p class="member-name">Monabeng Phakoana</p>
+        <h2>Member Details</h2>
+        <span class="required-label">Required field</span>
+        
+        <div class="radio-group">
+            <div class="radio-option">
+                <input type="radio" id="visitor" name="memberType" value="visitor" checked>
+                <label for="visitor">Visitor</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="member" name="memberType" value="member">
+                <label for="member">Member</label>
             </div>
         </div>
         
-        <!-- Search and Action Buttons -->
-        <div class="search-bar">
-            <input type="text" class="search-input" placeholder="Search first or last name...">
+        <div class="form-group">
+            <label for="firstName">FIRST NAME</label>
+            <input type="text" id="firstName" placeholder="First name">
         </div>
         
-        <div class="action-buttons">
-            <button class="btn">FILTER</button>
-            <button class="btn">ADD MEMBER</button>
-            <button class="btn">INVITE</button>
-     
-            <button class="btn">EXPORT</button>
+        <div class="form-group">
+            <label for="phone">PHONE NUMBER</label>
+            <input type="tel" id="phone" placeholder="Phone number">
+            <span class="add-option">ADD SECONDARY PHONE</span>
         </div>
         
-        <!-- Members Container -->
-        <div class="members-container">
-            <div class="members-header">
-                <h2 class="members-title">Members</h2>
+        <div class="form-group">
+            <label>PICK A CHECK IN CODE (4 DIGITS)</label>
+            <div class="check-in-code">8757</div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="form-group">
+            <label for="lastName">LAST NAME</label>
+            <input type="text" id="lastName" placeholder="Last name">
+        </div>
+        
+        <div class="form-group">
+            <label for="email">EMAIL ADDRESS</label>
+            <input type="email" id="email" placeholder="my@email.com">
+            <span class="add-option">ADD SECONDARY EMAIL</span>
+        </div>
+        
+        <div class="form-group">
+            <label for="joinDate">JOIN DATE</label>
+            <input type="text" id="joinDate" placeholder="04/25/2025">
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="form-group">
+            <label for="gender">GENDER</label>
+            <input type="text" id="gender" placeholder="--">
+        </div>
+        
+        <div class="form-group">
+            <label for="dob">DATE OF BIRTH</label>
+            <input type="text" id="dob" placeholder="mm/dd/yyyy">
+        </div>
+        
+        <div class="divider"></div>
+        
+        <h2>Address</h2>
+        
+        <div class="address-grid">
+            <div class="form-group">
+                <label for="street">STREET ADDRESS</label>
+                <input type="text" id="street" placeholder="Street Address">
             </div>
             
-            <!-- Help Card -->
-            <div class="help-card">
-                <h3 class="help-title">How To Add Members</h3>
-                <p>You can add members in a couple of different ways:</p>
-                
-                <div class="help-options">
-                    <div class="help-option">
-                        <div class="help-option-title">Enter member information through your account</div>
-                        <div class="help-option-desc">Have them fill out their information at your front desk</div>
-                        <button class="btn btn-primary" onclick="window.location.href='addMember.jsp'">ADD A MEMBER</button>
-                    </div>
-                    
-                    <div class="help-option">
-                        <div class="help-option-title">Import existing members using a spreadsheet file</div>
-                        <div class="help-option-desc">Invite members via Email to sign-up online</div>
-                        <button class="btn btn-primary">LEARN MORE</button>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="city">CITY</label>
+                <input type="text" id="city" placeholder="City">
+            </div>
+            
+            <div class="form-group">
+                <label for="zip">ZIP / POSTAL CODE</label>
+                <input type="text" id="zip" placeholder="*******">
+            </div>
+        </div>
+        
+        <div class="address-grid-2col">
+            <div class="form-group">
+                <label for="state">STATE</label>
+                <input type="text" id="state" placeholder="State">
+            </div>
+            
+            <div class="form-group">
+                <label for="country">COUNTRY</label>
+                <input type="text" id="country" placeholder="Lesotho">
             </div>
         </div>
     </div>
