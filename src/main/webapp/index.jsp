@@ -3,202 +3,285 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Gymdesk - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gymdesk - Members</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            margin: 0;
-            padding: 0;
-            color: #333;
+        :root {
+            --primary-color: #3498db;
+            --dark-color: #2c3e50;
+            --darker-color: #34495e;
+            --light-gray: #f8f9fa;
+            --medium-gray: #7f8c8d;
+            --border-gray: #ddd;
         }
         
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        .left-panel {
-            width: 40%;
-            background-color: #ffffff;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
-        
-        .right-panel {
-            width: 60%;
-            background-color: #f5f7fa;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 40px;
-        }
-        
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-        
-        h2 {
-            font-size: 18px;
-            color: #7f8c8d;
-            margin-bottom: 30px;
-            font-weight: normal;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
+        * {
             box-sizing: border-box;
         }
         
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .container {
+            padding: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            background-color: var(--dark-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .top-nav::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .nav-item {
+            padding: 12px 15px;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .nav-item.active {
+            background-color: var(--darker-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        /* Header */
+        .header {
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .member-name {
+            font-size: 16px;
+            color: var(--medium-gray);
+            margin: 5px 0 0 0;
+        }
+        
+        /* Search and Action Buttons */
+        .search-bar {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
         .btn {
-            background-color: #3498db;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-gray);
+            background-color: white;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            width: 100%;
-            margin-top: 10px;
         }
         
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        
-        .forgot-password {
-            text-align: right;
-            margin-top: 10px;
-        }
-        
-        .forgot-password a {
-            color: #7f8c8d;
-            text-decoration: none;
-        }
-        
-        .dashboard-section {
+        /* Members Container */
+        .members-container {
             background-color: white;
             border-radius: 8px;
             padding: 20px;
-            margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         
-        .dashboard-section h3 {
+        .members-header {
+            margin-bottom: 20px;
+        }
+        
+        .members-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        /* Help Card */
+        .help-card {
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .help-title {
+            font-weight: 500;
             margin-top: 0;
-            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
         }
         
-        .dashboard-section p {
-            color: #7f8c8d;
-            margin-bottom: 0;
+        .help-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 15px;
         }
         
-        .resource-links {
-            list-style-type: none;
-            padding: 0;
+        @media (min-width: 768px) {
+            .help-options {
+                flex-direction: row;
+            }
         }
         
-        .resource-links li {
+        .help-option {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .help-option-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .help-option-desc {
+            color: var(--medium-gray);
+            font-size: 14px;
             margin-bottom: 10px;
         }
         
-        .resource-links a {
-            color: #3498db;
-            text-decoration: none;
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .nav-item {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .member-name {
+                font-size: 14px;
+            }
+            
+            .action-buttons .btn {
+                flex: 1 0 calc(50% - 5px);
+                padding: 8px 5px;
+                font-size: 13px;
+            }
+            
+            .members-container {
+                padding: 15px;
+            }
+            
+            .help-card {
+                padding: 15px;
+            }
         }
         
-        .divider {
-            border-top: 1px solid #eee;
-            margin: 30px 0;
+        @media (max-width: 400px) {
+            .action-buttons .btn {
+                flex: 1 0 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="left-panel">
-            <div class="logo">Gymdesk</div>
-            <h1>Welcome back!</h1>
-            <h2>Sign in to your Gymdesk account</h2>
-            
-            <form action="login" method="post">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="text" id="email" name="email" placeholder="Enter your email">
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password">
-                </div>
-                
-                <div class="forgot-password">
-                    <a href="#">Forgot password?</a>
-                </div>
-                
-                <button type="submit" class="btn">Sign In</button>
-            </form>
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <div class="nav-item active">Members</div>
+            <div class="nav-item">Check-In</div>
+            <div class="nav-item">Attendance</div>
+            <div class="nav-item">Memberships</div>
+            <div class="nav-item">Rosters</div>
+            <div class="nav-item">Documents</div>
+            <div class="nav-item">Content</div>
+            <div class="nav-item">Growth</div>
+            <div class="nav-item">Settings</div>
         </div>
         
-        <div class="right-panel">
-            <h1>Dashboard</h1>
-            <h2>Monitoring Phakosana</h2>
-            
-            <div class="dashboard-section">
-                <h3>Welcome to Gymdesk!</h3>
-                <p>Let's get your account set up</p>
+        <!-- Header with Member Name -->
+        <div class="header">
+            <div>
+                <h1 class="page-title">Members</h1>
+                <p class="member-name">Monabeng Phakoana</p>
+            </div>
+        </div>
+        
+        <!-- Search and Action Buttons -->
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search first or last name...">
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn">FILTER</button>
+            <button class="btn">ADD MEMBER</button>
+            <button class="btn">INVITE</button>
+            <button class="btn">PRINT</button>
+            <button class="btn">EXPORT</button>
+        </div>
+        
+        <!-- Members Container -->
+        <div class="members-container">
+            <div class="members-header">
+                <h2 class="members-title">Members</h2>
             </div>
             
-            <div class="divider"></div>
-            
-            <div class="dashboard-section">
-                <h3>Memberships and gym access</h3>
-                <p>Set up your gym programs and memberships.</p>
-            </div>
-            
-            <div class="dashboard-section">
-                <h3>Marketing and lead generation</h3>
-                <p>Set up lead capture forms, referral programs and marketing automations.</p>
-            </div>
-            
-            <div class="dashboard-section">
-                <h3>Resource Links</h3>
-                <ul class="resource-links">
-                    <li><a href="#">Getting Started Guide</a></li>
-                    <li><a href="#">Video Tutorial Library</a></li>
-                </ul>
-            </div>
-            
-            <div class="dashboard-section">
-                <h3>Add or import member data</h3>
-                <p>Import member data and set up the sign-up flow.</p>
+            <!-- Help Card -->
+            <div class="help-card">
+                <h3 class="help-title">How To Add Members</h3>
+                <p>You can add members in a couple of different ways:</p>
+                
+                <div class="help-options">
+                    <div class="help-option">
+                        <div class="help-option-title">Enter member information through your account</div>
+                        <div class="help-option-desc">Have them fill out their information at your front desk</div>
+                        <button class="btn btn-primary">ADD A MEMBER</button>
+                    </div>
+                    
+                    <div class="help-option">
+                        <div class="help-option-title">Import existing members using a spreadsheet file</div>
+                        <div class="help-option-desc">Invite members via Email to sign-up online</div>
+                        <button class="btn btn-primary">LEARN MORE</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
