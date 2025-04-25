@@ -228,7 +228,7 @@
         <div class="top-nav">
             <div class="nav-item active">Members</div>
             <div class="nav-item">Check-In</div>
-            <div class="nav-item">Attendance</div>
+            <div class="nav-item" onclick="window.location.href='Attendance.jsp'">Attendance</div>
             <div class="nav-item">Memberships</div>
             <div class="nav-item">Rosters</div>
             <div class="nav-item">Documents</div>
