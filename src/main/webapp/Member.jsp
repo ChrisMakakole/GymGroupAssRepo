@@ -273,7 +273,7 @@
                     <div class="help-option">
                         <div class="help-option-title">Enter member information through your account</div>
                         <div class="help-option-desc">Have them fill out their information at your front desk</div>
-                        <button class="btn btn-primary" onclick="window.location.href='dashboard.jsp'">ADD A MEMBER</button>
+                        <button class="btn btn-primary" onclick="window.location.href='addMember.jsp'">ADD A MEMBER</button>
                     </div>
                     
                     <div class="help-option">

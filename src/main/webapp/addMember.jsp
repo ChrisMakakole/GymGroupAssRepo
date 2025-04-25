@@ -1,232 +1,100 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gymdesk - Visitor/Member Sign-up</title>
+    <title>Gymdesk - Member Registration</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --border-color: #ddd;
-            --required-color: #e74c3c;
-            --section-border: #eee;
+            --primary: #3498db;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --gray: #f8f9fa;
+            --white: #ffffff;
+            --border: #ddd;
         }
-        
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
         body {
-            background-color: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--gray);
             margin: 0;
-            padding: 20px;
-            color: #333;
-            line-height: 1.5;
+            padding: 2rem;
+            line-height: 1.6;
         }
-        
         .container {
             max-width: 800px;
             margin: 0 auto;
-            background-color: white;
+            background: var(--white);
             border-radius: 8px;
-            padding: 30px;
+            padding: 2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        h1 {
-            font-size: 24px;
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        
-        h2 {
-            font-size: 18px;
-            margin: 25px 0 15px 0;
-            color: #2c3e50;
-        }
-        
-        .required-label {
-            font-size: 14px;
-            color: var(--required-color);
-            margin-bottom: 15px;
-            display: block;
-        }
-        
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-        
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
+        .message {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
             border-radius: 4px;
-            font-size: 14px;
+            display: none;
         }
-        
-        .add-option {
-            color: var(--primary-color);
-            font-size: 14px;
-            margin-top: 8px;
+        .success { background: #e8f8f5; color: var(--success); border: 1px solid var(--success); }
+        .error { background: #fdedec; color: var(--error); border: 1px solid var(--error); }
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            width: 100%;
+            margin-top: 1.5rem;
         }
-        
-        .add-option::before {
-            content: "+";
-            font-weight: bold;
-        }
-        
-        .check-in-code {
-            font-size: 18px;
-            font-weight: 500;
-            margin-top: 10px;
-        }
-        
-        .divider {
-            border-top: 1px solid var(--section-border);
-            margin: 30px 0;
-        }
-        
-        .address-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .address-grid-2col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        @media (max-width: 600px) {
-            .address-grid, .address-grid-2col {
-                grid-template-columns: 1fr;
-            }
-        }
+        button:hover { background: #2980b9; }
+        .required::after { content: " *"; color: var(--error); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Visitor / Member Sign-up</h1>
+        <h1>Member Registration</h1>
+        <div id="message" class="message"></div>
         
-        <h2>Member Details</h2>
-        <span class="required-label">Required field</span>
-        
-        <div class="radio-group">
-            <div class="radio-option">
-                <input type="radio" id="visitor" name="memberType" value="visitor" checked>
-                <label for="visitor">Visitor</label>
-            </div>
-            <div class="radio-option">
-                <input type="radio" id="member" name="memberType" value="member">
-                <label for="member">Member</label>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="firstName">FIRST NAME</label>
-            <input type="text" id="firstName" placeholder="First name">
-        </div>
-        
-        <div class="form-group">
-            <label for="phone">PHONE NUMBER</label>
-            <input type="tel" id="phone" placeholder="Phone number">
-            <span class="add-option">ADD SECONDARY PHONE</span>
-        </div>
-        
-        <div class="form-group">
-            <label>PICK A CHECK IN CODE (4 DIGITS)</label>
-            <div class="check-in-code">8757</div>
-        </div>
-        
-        <div class="divider"></div>
-        
-        <div class="form-group">
-            <label for="lastName">LAST NAME</label>
-            <input type="text" id="lastName" placeholder="Last name">
-        </div>
-        
-        <div class="form-group">
-            <label for="email">EMAIL ADDRESS</label>
-            <input type="email" id="email" placeholder="my@email.com">
-            <span class="add-option">ADD SECONDARY EMAIL</span>
-        </div>
-        
-        <div class="form-group">
-            <label for="joinDate">JOIN DATE</label>
-            <input type="text" id="joinDate" placeholder="04/25/2025">
-        </div>
-        
-        <div class="divider"></div>
-        
-        <div class="form-group">
-            <label for="gender">GENDER</label>
-            <input type="text" id="gender" placeholder="--">
-        </div>
-        
-        <div class="form-group">
-            <label for="dob">DATE OF BIRTH</label>
-            <input type="text" id="dob" placeholder="mm/dd/yyyy">
-        </div>
-        
-        <div class="divider"></div>
-        
-        <h2>Address</h2>
-        
-        <div class="address-grid">
+        <form id="memberForm" action="Members_reg" method="POST">
             <div class="form-group">
-                <label for="street">STREET ADDRESS</label>
-                <input type="text" id="street" placeholder="Street Address">
+                <label for="name" class="required">Full Name</label>
+                <input type="text" id="name" name="name" required>
             </div>
             
             <div class="form-group">
-                <label for="city">CITY</label>
-                <input type="text" id="city" placeholder="City">
+                <label for="phone" class="required">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
             </div>
             
             <div class="form-group">
-                <label for="zip">ZIP / POSTAL CODE</label>
-                <input type="text" id="zip" placeholder="*******">
-            </div>
-        </div>
-        
-        <div class="address-grid-2col">
-            <div class="form-group">
-                <label for="state">STATE</label>
-                <input type="text" id="state" placeholder="State">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email">
             </div>
             
             <div class="form-group">
-                <label for="country">COUNTRY</label>
-                <input type="text" id="country" placeholder="Lesotho">
+                <label for="membership_start_date">Membership Start Date</label>
+                <input type="date" id="membership_start_date" name="membership_start_date">
             </div>
-        </div>
+            
+            <div class="form-group">
+                <label for="membership_end_date">Membership End Date</label>
+                <input type="date" id="membership_end_date" name="membership_end_date">
+            </div>
+            
+            <button type="submit">Register Member</button>
+        </form>
     </div>
+
 </body>
 </html>
