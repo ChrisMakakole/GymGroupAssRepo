@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gym Member Management</title>
     <style>
-        body {
+        #body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 20px;
             background-color: #f5f5f5;
@@ -70,7 +70,7 @@
         }
     </style>
 </head>
-<body>
+<body id="body">
     <div class="container">
         <h1>Gym Member Management</h1>
         

@@ -228,8 +228,8 @@
         <div class="top-nav">
             <div class="nav-item active">Members</div>
             <div class="nav-item">Check-In</div>
-            <div class="nav-item" onclick="window.location.href='Attendance.jsp'">Attendance</div>
-            <div class="nav-item">Memberships</div>
+            <div class="nav-item" onclick="loadContent('Attendance.jsp')">Attendance</div>
+            <div class="nav-item" onclick="loadContent('addTrainer.jsp')">Add trainers</div>
             <div class="nav-item">Rosters</div>
             <div class="nav-item">Documents</div>
             <div class="nav-item">Content</div>
@@ -273,7 +273,7 @@
                     <div class="help-option">
                         <div class="help-option-title">Enter member information through your account</div>
                         <div class="help-option-desc">Have them fill out their information at your front desk</div>
-                        <button class="btn btn-primary" onclick="window.location.href='addMember.jsp'">ADD A MEMBER</button>
+                        <button class="btn btn-primary"  onclick="loadContent('addMember.jsp')">ADD A MEMBER</button>
                     </div>
                     
                     <div class="help-option">

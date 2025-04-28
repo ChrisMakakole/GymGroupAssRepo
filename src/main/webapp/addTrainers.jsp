@@ -81,18 +81,17 @@
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email">
             </div>
+                        <div class="form-group">
+                <label for="email">Training type</label>
+                <input type="email" id="email" name="email">
+            </div>
             
             <div class="form-group">
-                <label for="membership_start_date">Membership Start Date</label>
+                <label for="membership_start_date">Registration date </label>
                 <input type="date" id="membership_start_date" name="membership_start_date">
             </div>
             
-            <div class="form-group">
-                <label for="membership_end_date">Membership End Date</label>
-                <input type="date" id="membership_end_date" name="membership_end_date">
-            </div>
-            
-            <button type="submit">Register Member</button>
+            <button type="submit">Register Trainer</button>
         </form>
     </div>
 

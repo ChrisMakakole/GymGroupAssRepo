@@ -1,10 +1,12 @@
+package com.example.gymproject;
+
 import java.io.*;
 import java.sql.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
-@WebServlet("/LoginServlet")
+@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/GymManament?useSSL=false";
     private static final String DB_USER = "root";
@@ -29,12 +31,15 @@ public class LoginServlet extends HttpServlet {
                         if (rs.next()) {
                             // Successful login
                             HttpSession session = request.getSession();
+                            System.out.print(username + rs.getString("username"));
                             session.setAttribute("username", username);
                             response.sendRedirect("dashboard.jsp");
+                            
                         } else {
                             // Invalid credentials
                             request.setAttribute("errorMessage", "Invalid username or password");
                             request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+                             System.out.print(username); 
                         }
                     }
                 }
@@ -42,7 +47,7 @@ public class LoginServlet extends HttpServlet {
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Database error occurred");
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+            request.getRequestDispatcher("dashboard.jsp").forward(request, response);
         }
     }
 }
