@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gym Member Management</title>
+    <title>Gym Trainers</title>
     <style>
         #body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -72,7 +72,7 @@
 </head>
 <body id="body">
     <div class="container">
-        <h1>Gym Member Management</h1>
+        <h1>Gym Trainers</h1>
         
         <table>
             <thead>
@@ -80,10 +80,8 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Membership Start</th>
-                    <th>Membership End</th>
-                    <th>status</th>
-                    <th>action</th>
+                    <th>type</th>
+                    <th>reg_Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -104,29 +102,24 @@
                     Statement stmt = conn.createStatement();
                     
                     // Execute query
-                    ResultSet rs = stmt.executeQuery("SELECT * FROM users");
+                    ResultSet rs = stmt.executeQuery("SELECT * FROM Trainers");
                     
                     // Process results
                     while(rs.next()) {
                         String memberName = rs.getString("name");
                         String memberEmail = rs.getString("email");
                         String memberPhone = rs.getString("phone");
-                        Date startDate = rs.getDate("membership_start_date");
-                        Date endDate = rs.getDate("membership_end_date");
-                        // You would need to add a status column to your table or manage it separately
-                        String status = rs.getString("attendance"); // Default status
+                        String type = rs.getString("training_type");
+                        Date startDate = rs.getDate("registration_date");
+                      
                 %>
                 <tr>
                     <td><%= memberName %></td>
                     <td><%= memberEmail %></td>
                     <td><%= memberPhone %></td>
+                    <td><%= type %></td>
                     <td><%= startDate %></td>
-                    <td><%= endDate %></td>
-                    <td><span class="status <%= status.toLowerCase().replace(" ", "-") %>"><%= status %></span></td>
-                    <td>
-                        <button class="action-btn check-in" onclick="loadContent('CheckIn.jsp')"">CheckIn</button>
-                        <button class="action-btn check-out" onclick="checkOut('<%= memberPhone %>')">CheckOut</button>
-                    </td>
+                   
                 </tr>
                 <%
                     }

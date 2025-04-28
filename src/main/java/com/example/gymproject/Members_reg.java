@@ -6,7 +6,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
-
 @WebServlet(name = "Members_reg", urlPatterns = {"/Members_reg"})
 public class Members_reg extends HttpServlet {
     
@@ -26,15 +25,13 @@ public class Members_reg extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-      
+        // Set response type before getting writer
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         
-        PrintWriter out = response.getWriter();
-        
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(
-                 "INSERT INTO users (name, email, phone, membership_start_date, membership_end_date) VALUES (?, ?, ?, ?, ?)")) {
+                 "INSERT INTO users (name, email, phone, membership_start_date, membership_end_date, attendance) VALUES (?, ?, ?, ?, ?, ?)")) {
             
             // Set parameters
             pstmt.setString(1, request.getParameter("name"));
@@ -44,23 +41,26 @@ public class Members_reg extends HttpServlet {
             // Handle dates
             pstmt.setDate(4, parseDate(request.getParameter("membership_start_date")));
             pstmt.setDate(5, parseDate(request.getParameter("membership_end_date")));
+            pstmt.setString(6, "out");
             
             int rows = pstmt.executeUpdate();
             
             if (rows > 0) {
-                out.print("{\"status\":\"success\", \"message\":\"Member registered successfully\"}");
+                // Set success message in session
+                request.getSession().setAttribute("message", "Member registered successfully");
+                request.getSession().setAttribute("messageType", "success");
             } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print("{\"status\":\"error\", \"message\":\"No rows affected\"}");
+                request.getSession().setAttribute("message", "Failed to register member");
+                request.getSession().setAttribute("messageType", "error");
             }
             
         } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.print(String.format("{\"status\":\"error\", \"message\":\"Database error: %s\"}", 
-                e.getMessage().replace("\"", "'")));
-        } finally {
-            out.close();
+            request.getSession().setAttribute("message", "Database error: " + e.getMessage());
+            request.getSession().setAttribute("messageType", "error");
         }
+        
+        // Redirect to index.jsp
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
     }
     
     private Date parseDate(String dateString) {

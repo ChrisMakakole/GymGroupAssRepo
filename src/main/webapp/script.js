@@ -62,6 +62,9 @@ function setActiveMenuItem(pageName) {
   }
 }
 
+
+
+
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function() {
   // Set click handlers for all nav links

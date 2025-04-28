@@ -227,14 +227,7 @@
         <!-- Top Navigation -->
         <div class="top-nav">
             <div class="nav-item active">Members</div>
-            <div class="nav-item">Check-In</div>
-            <div class="nav-item" onclick="loadContent('Attendance.jsp')">Attendance</div>
-            <div class="nav-item" onclick="loadContent('addTrainer.jsp')">Add trainers</div>
-            <div class="nav-item">Rosters</div>
-            <div class="nav-item">Documents</div>
-            <div class="nav-item">Content</div>
-            <div class="nav-item">Growth</div>
-            <div class="nav-item">Settings</div>
+   
         </div>
         
         <!-- Header with Member Name -->
@@ -249,14 +242,7 @@
         <div class="search-bar">
             <input type="text" class="search-input" placeholder="Search first or last name...">
         </div>
-        
-        <div class="action-buttons">
-            <button class="btn">FILTER</button>
-            <button class="btn">ADD MEMBER</button>
-            <button class="btn">INVITE</button>
-            <button class="btn">PRINT</button>
-            <button class="btn">EXPORT</button>
-        </div>
+       
         
         <!-- Members Container -->
         <div class="members-container">

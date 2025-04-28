@@ -38,7 +38,7 @@
 <body>
 <div class="sidebar">
   <div class="logo-details">
-    <i class='bx bxl-c-plus-plus'></i>
+    <i ></i>
     <span class="logo_name">Body Master</span>
   </div>
   <ul class="nav-links">
@@ -55,9 +55,22 @@
       </a>
     </li>
     <li>
-      <a href="#" onclick="loadContent('Orders.jsp')">
-        <i class='bx bx-list-ul'></i>
-        <span class="links_name">Order list</span>
+      <a href="#" onclick="loadContent('addTrainers.jsp')">
+          <i class='bx bx-box'></i><!--class='bx bx-list-ul'--> 
+        <span class="links_name">Add Trainers</span>
+      </a>
+    </li>
+    <li>
+      <a href="#" onclick="loadContent('Attendance.jsp')">
+          <i class='bx bx-box'></i><!--class='bx bx-list-ul'f--> 
+        <span class="links_name">Attendance</span>
+      </a>
+    </li>
+    
+    <li>
+      <a href="#" onclick="loadContent('ViewTrainers.jsp')">
+          <i class='bx bx-box'></i><!--class='bx bx-list-ul'f--> 
+        <span class="links_name">View Trainers</span>
       </a>
     </li>
     <!-- Other menu items remain the same -->

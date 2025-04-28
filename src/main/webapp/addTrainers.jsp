@@ -1,3 +1,4 @@
+<%@page import="java.sql.*" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -63,10 +64,10 @@
 </head>
 <body id="body">
     <div class="container">
-        <h1>Member Registration</h1>
+        <h1>Trainer Registration</h1>
         <div id="message" class="message"></div>
         
-        <form id="memberForm" action="Members_reg" method="POST">
+        <form id="memberForm" action="AddTrainers" method="POST">
             <div class="form-group">
                 <label for="name" class="required">Full Name</label>
                 <input type="text" id="name" name="name" required>
@@ -81,19 +82,56 @@
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email">
             </div>
-                        <div class="form-group">
-                <label for="email">Training type</label>
-                <input type="email" id="email" name="email">
+            
+            <div class="form-group">
+                <label for="trainingType">Training Type</label>
+                <select id="trainingType" name="trainingType" class="form-control">
+                    <option value="">Select a training type</option>
+                    <%
+                    // Database connection parameters
+                    String url = "jdbc:mysql://localhost:3306/GymManagement?useSSL=false";
+                    String user = "root";
+                    String password = "59908114";
+                    
+                    try {
+                        // Load JDBC driver
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        
+                        // Create connection
+                        Connection conn = DriverManager.getConnection(url, user, password);
+                        
+                        // Create statement
+                        Statement stmt = conn.createStatement();
+                        
+                        // Execute query
+                        ResultSet rs = stmt.executeQuery("SELECT name FROM TrainingTypes");
+                        
+                        // Process results
+                        while(rs.next()) {
+                            String trainingName = rs.getString("name");
+                    %>
+                    <option value="<%= trainingName %>"><%= trainingName %></option>
+                    <%
+                        }
+                        
+                        // Close connections
+                        rs.close();
+                        stmt.close();
+                        conn.close();
+                    } catch (Exception e) {
+                        out.println("<option value=''>Error loading training types</option>");
+                    }
+                    %>
+                </select>
             </div>
             
             <div class="form-group">
-                <label for="membership_start_date">Registration date </label>
+                <label for="membership_start_date">Registration date</label>
                 <input type="date" id="membership_start_date" name="membership_start_date">
             </div>
             
             <button type="submit">Register Trainer</button>
         </form>
     </div>
-
 </body>
 </html>
