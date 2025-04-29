@@ -1,5 +1,6 @@
 <%@page import="java.sql.*" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.net.URLEncoder"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -124,8 +125,14 @@
                     <td><%= endDate %></td>
                     <td><span class="status <%= status.toLowerCase().replace(" ", "-") %>"><%= status %></span></td>
                     <td>
-                        <button class="action-btn check-in" onclick="loadContent('CheckIn.jsp')"">CheckIn</button>
-                        <button class="action-btn check-out" onclick="checkOut('<%= memberPhone %>')">CheckOut</button>
+                        <button class="action-btn check-in" 
+        onclick="window.location.href='CheckIn.jsp?name=<%= URLEncoder.encode(memberName, "UTF-8") %>&phone=<%= memberPhone %>&startDate=<%= startDate %>&endDate=<%= endDate %>'" >
+    CheckIn
+</button>
+                       <button class="action-btn check-out"
+        onclick="window.location.href='CheckOut.jsp?name=<%= URLEncoder.encode(memberName, "UTF-8") %>&phone=<%= memberPhone %>&startDate=<%= startDate %>&endDate=<%= endDate %>'" >
+    CheckOut
+</button>
                     </td>
                 </tr>
                 <%

@@ -306,7 +306,7 @@
     <div class="confirmation-container">
       <div class="confirmation-box">
         <div class="confirmation-icon">✓</div>
-        <h1 class="confirmation-title">Check-In Confirmation</h1>
+        <h1 class="confirmation-title">Check-out Confirmation</h1>
         
         <div class="member-details">
           <div class="member-detail">
@@ -325,15 +325,16 @@
             <span class="detail-label">Membership End:</span>
             <span>${not empty param.endDate ? param.endDate : 'N/A'}</span>
           </div>
-          </div>
+         
+        </div>
         
-          <p>Are you sure you want to check in this member?</p>
+        <p>Are you sure you want to check out this member?</p>
         
         <div class="action-buttons">
-          <form action="CheckInServlet" method="post">
+          <form action="CheckOutServlet" method="post">
             <input type="hidden" name="phone" value="${param.phone}">
             <input type="hidden" name="name" value="${param.name}">
-            <button type="submit" class="btn btn-confirm">Confirm Check-In</button>
+            <button type="submit" class="btn btn-confirm">Confirm Check-Out</button>
           </form>
           <a href="index.jsp" class="btn btn-cancel">Cancel</a>
         </div>

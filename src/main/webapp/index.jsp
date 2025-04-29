@@ -22,9 +22,7 @@
       animation: spin 1s linear infinite;
       margin: 0 auto 20px;
     }
-    @keyframes spin 
-      { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    
     
     .error-message {
       text-align: center;
@@ -33,47 +31,101 @@
       border-radius: 8px;
       margin: 20px;
     }
+
+    /* Modified sidebar styles */
+    .sidebar {
+      position: fixed;
+      height: 100%;
+      width: 240px;
+      background: #0A2558;
+      padding: 15px;
+      z-index: 100;
+      transition: all 0.5s ease;
+    }
+    
+    .logo-details {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      color: white;
+      padding-left: 15px; /* Added padding */
+    }
+    
+    .nav-links {
+      margin-top: 20px;
+      padding-left: 15px; /* Added padding to move items right */
+    }
+    
+    .nav-links li {
+      position: relative;
+      list-style: none;
+      margin-bottom: 5px;
+    }
+    
+    .nav-links li a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      transition: all 0.4s ease;
+    }
+    
+    .nav-links li a:hover,
+    .nav-links li a.active {
+      background: #34495e;
+    }
+    
+    .nav-links li i {
+      font-size: 18px;
+      margin-right: 5px; /* Increased spacing between icon and text */
+    }
+    
+    .links_name {
+      margin-left: -15px; /* Additional spacing */
+    }
+    
   </style>
 </head>
 <body>
+ 
 <div class="sidebar">
   <div class="logo-details">
-    <i ></i>
+    
     <span class="logo_name">Body Master</span>
   </div>
   <ul class="nav-links">
     <li>
-      <a href="#" class="active" onclick="loadContent('adminDashboard.jsp')">
+      <a href="#"  onclick="loadContent('adminDashboard.jsp')">
         <i class='bx bx-grid-alt'></i>
         <span class="links_name">Dashboard</span>
       </a>
     </li>
     <li>
       <a href="#" onclick="loadContent('Member.jsp')">
-        <i class='bx bx-box'></i>
+        <i class='bx bx-user'></i>
         <span class="links_name">Members</span>
       </a>
     </li>
     <li>
       <a href="#" onclick="loadContent('addTrainers.jsp')">
-          <i class='bx bx-box'></i><!--class='bx bx-list-ul'--> 
+        <i class='bx bx-user-plus'></i>
         <span class="links_name">Add Trainers</span>
       </a>
     </li>
     <li>
-      <a href="#" onclick="loadContent('Attendance.jsp')">
-          <i class='bx bx-box'></i><!--class='bx bx-list-ul'f--> 
+      <a href="#" class="active" onclick="loadContent('Attendance.jsp')">
+        <i class='bx bx-calendar-check'></i>
         <span class="links_name">Attendance</span>
       </a>
     </li>
-    
     <li>
       <a href="#" onclick="loadContent('ViewTrainers.jsp')">
-          <i class='bx bx-box'></i><!--class='bx bx-list-ul'f--> 
+        <i class='bx bx-list-ul'></i>
         <span class="links_name">View Trainers</span>
       </a>
     </li>
-    <!-- Other menu items remain the same -->
   </ul>
 </div>
 
