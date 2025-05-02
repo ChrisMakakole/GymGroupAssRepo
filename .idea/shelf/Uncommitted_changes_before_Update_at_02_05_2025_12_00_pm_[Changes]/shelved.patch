@@ -1,0 +1,4586 @@
+Index: src/main/webapp/admin/dashboard.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/dashboard.jsp b/src/main/webapp/admin/dashboard.jsp
+new file mode 100644
+--- /dev/null	(date 1745533393084)
++++ b/src/main/webapp/admin/dashboard.jsp	(date 1745533393084)
+@@ -0,0 +1,115 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Admin Dashboard</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 0;
++    }
++
++    .dashboard-container {
++      max-width: 960px;
++      margin: 20px auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .admin-info {
++      text-align: center;
++      margin-bottom: 20px;
++      color: #555;
++    }
++
++    .module-grid {
++      display: grid;
++      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
++      gap: 15px;
++    }
++
++    .module-card {
++      background-color: #e9ecef;
++      padding: 15px;
++      border-radius: 6px;
++      text-align: center;
++      transition: background-color 0.3s ease;
++    }
++
++    .module-card:hover {
++      background-color: #d3d9df;
++    }
++
++    .module-card a {
++      text-decoration: none;
++      color: #333;
++      display: block;
++      font-weight: bold;
++      font-size: 1.1em;
++    }
++
++    .logout-link {
++      display: block;
++      text-align: center;
++      margin-top: 20px;
++      color: #007bff;
++      text-decoration: none;
++      font-weight: bold;
++    }
++
++    .logout-link:hover {
++      text-decoration: underline;
++    }
++  </style>
++</head>
++<body>
++<div class="dashboard-container">
++  <h1>Admin Dashboard</h1>
++
++  <div class="admin-info">
++    Welcome, <%= session.getAttribute("admin") %>!
++  </div>
++
++  <div class="module-grid">
++    <div class="module-card">
++      <a href="${pageContext.request.contextPath}/admin/users">Manage Users</a>
++    </div>
++    <div class="module-card">
++      <a href="${pageContext.request.contextPath}/admin/packages">Manage Packages</a>
++    </div>
++    <div class="module-card">
++      <a href="${pageContext.request.contextPath}/admin/trainers">Manage Trainers</a>
++    </div>
++    <div class="module-card">
++      <a href="${pageContext.request.contextPath}/admin/payments">Manage Payments</a>
++    </div>
++    <div class="module-card">
++      <a href="${pageContext.request.contextPath}/admin/attendance?action=view">View Attendance</a>
++    </div>
++    <div class="module-card">
++      <a href="${pageContext.request.contextPath}/admin/attendance?action=mark">Mark Attendance</a>
++    </div>
++    <div class="module-card">
++      <a href="${pageContext.request.contextPath}/admin/shifts">Manage Shifts</a>
++    </div>
++    <div class="module-card">
++      <a href="${pageContext.request.contextPath}/admin/trainer_shifts">Manage Trainer Shifts</a>
++    </div>
++  </div>
++
++  <a class="logout-link" href="${pageContext.request.contextPath}/admin/logout">Logout</a>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/webapp/admin/manage_packages.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/manage_packages.jsp b/src/main/webapp/admin/manage_packages.jsp
+new file mode 100644
+--- /dev/null	(date 1745533766748)
++++ b/src/main/webapp/admin/manage_packages.jsp	(date 1745533766748)
+@@ -0,0 +1,174 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="java.util.List" %>
++<%@ page import="com.example.gymproject.model.Package" %>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Manage Packages</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 20px;
++    }
++
++    .container {
++      max-width: 960px;
++      margin: 0 auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .add-button-container {
++      text-align: right;
++      margin-bottom: 15px;
++    }
++
++    .add-button {
++      background-color: #28a745;
++      color: white;
++      padding: 10px 15px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      text-decoration: none;
++      font-size: 16px;
++      transition: background-color 0.3s ease;
++    }
++
++    .add-button:hover {
++      background-color: #1e7e34;
++    }
++
++    table {
++      width: 100%;
++      border-collapse: collapse;
++      margin-top: 15px;
++    }
++
++    th, td {
++      padding: 10px;
++      border-bottom: 1px solid #ddd;
++      text-align: left;
++    }
++
++    th {
++      background-color: #f2f2f2;
++      font-weight: bold;
++    }
++
++    tr:hover {
++      background-color: #f9f9f9;
++    }
++
++    .action-buttons a, .action-buttons form {
++      display: inline-block;
++      margin-right: 5px;
++    }
++
++    .edit-button {
++      background-color: #007bff;
++      color: white;
++      padding: 8px 12px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      text-decoration: none;
++      font-size: 14px;
++      transition: background-color 0.3s ease;
++    }
++
++    .edit-button:hover {
++      background-color: #0056b3;
++    }
++
++    .delete-button {
++      background-color: #dc3545;
++      color: white;
++      padding: 8px 12px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      text-decoration: none;
++      font-size: 14px;
++      transition: background-color 0.3s ease;
++    }
++
++    .delete-button:hover {
++      background-color: #c82333;
++    }
++
++    .delete-form {
++      margin: 0;
++      padding: 0;
++    }
++  </style>
++</head>
++<body>
++<div class="container">
++  <h1>Manage Packages</h1>
++
++  <div class="add-button-container">
++    <a href="${pageContext.request.contextPath}/admin/add_package.jsp" class="add-button">Add New Package</a>
++  </div>
++
++  <%
++    List<Package> packages = (List<Package>) request.getAttribute("packages");
++    if (packages != null && !packages.isEmpty()) {
++  %>
++  <table>
++    <thead>
++    <tr>
++      <th>ID</th>
++      <th>Name</th>
++      <th>Description</th>
++      <th>Price</th>
++      <th>Duration (Days)</th>
++      <th>Actions</th>
++    </tr>
++    </thead>
++    <tbody>
++    <% for (Package pkg : packages) { %>
++    <tr>
++      <td><%= pkg.getId() %></td>
++      <td><%= pkg.getName() %></td>
++      <td><%= pkg.getDescription() %></td>
++      <td><%= pkg.getPrice() %></td>
++      <td><%= pkg.getDurationDays() %></td>
++      <td class="action-buttons">
++        <a href="${pageContext.request.contextPath}/admin/packages?action=edit&id=<%= pkg.getId() %>" class="edit-button">Edit</a>
++        <form action="${pageContext.request.contextPath}/admin/packages" method="post" class="delete-form">
++          <input type="hidden" name="action" value="delete">
++          <input type="hidden" name="id" value="<%= pkg.getId() %>">
++          <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this package?')">Delete</button>
++        </form>
++      </td>
++    </tr>
++    <% } %>
++    </tbody>
++  </table>
++  <%
++  } else {
++  %>
++  <p>No packages available.</p>
++  <%
++    }
++  %>
++
++  <div style="margin-top: 20px;">
++    <a href="${pageContext.request.contextPath}/admin/dashboard">Back to Dashboard</a>
++  </div>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/util/DatabaseConnection.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/util/DatabaseConnection.java b/src/main/java/com/example/gymproject/util/DatabaseConnection.java
+new file mode 100644
+--- /dev/null	(date 1745534007184)
++++ b/src/main/java/com/example/gymproject/util/DatabaseConnection.java	(date 1745534007184)
+@@ -0,0 +1,74 @@
++package com.example.gymproject.util;
++
++import java.sql.Connection;
++import java.sql.DriverManager;
++import java.sql.ResultSet;
++import java.sql.SQLException;
++import java.sql.Statement;
++
++public class DatabaseConnection {
++
++    private static final String DB_URL = "jdbc:mysql://localhost:3306/gym_management?useSSL=false&allowPublicKeyRetrieval=true";
++    private static final String DB_USER = "root"; // Replace with your database username
++    private static final String DB_PASSWORD = "12345"; // Replace with your database password
++
++    public static Connection getConnection() {
++        Connection connection = null;
++        try {
++            Class.forName("com.mysql.cj.jdbc.Driver"); // For MySQL Connector/J 8.0+
++            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
++            System.out.println("Database connection established successfully.");
++        } catch (ClassNotFoundException e) {
++            System.err.println("MySQL JDBC Driver not found: " + e.getMessage());
++        } catch (SQLException e) {
++            System.err.println("Failed to connect to the database: " + e.getMessage());
++        }
++        return connection;
++    }
++
++    public static void close(Connection connection) {
++        if (connection != null) {
++            try {
++                connection.close();
++                System.out.println("Database connection closed.");
++            } catch (SQLException e) {
++                System.err.println("Error closing the connection: " + e.getMessage());
++            }
++        }
++    }
++
++    public static void close(Statement statement) {
++        if (statement != null) {
++            try {
++                statement.close();
++            } catch (SQLException e) {
++                System.err.println("Error closing the statement: " + e.getMessage());
++            }
++        }
++    }
++
++    public static void close(ResultSet resultSet) {
++        if (resultSet != null) {
++            try {
++                resultSet.close();
++            } catch (SQLException e) {
++                System.err.println("Error closing the result set: " + e.getMessage());
++            }
++        }
++    }
++
++    // Convenience method to close all resources
++    public static void close(ResultSet resultSet, Statement statement, Connection connection) {
++        close(resultSet);
++        close(statement);
++        close(connection);
++    }
++
++    public static void main(String[] args) {
++        // Simple test to check if the connection is successful
++        Connection conn = DatabaseConnection.getConnection();
++        if (conn != null) {
++            DatabaseConnection.close(conn);
++        }
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/controller/PackageServlet.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/controller/PackageServlet.java b/src/main/java/com/example/gymproject/controller/PackageServlet.java
+new file mode 100644
+--- /dev/null	(date 1745528373443)
++++ b/src/main/java/com/example/gymproject/controller/PackageServlet.java	(date 1745528373443)
+@@ -0,0 +1,191 @@
++package com.example.gymproject.controller;
++
++import com.example.gymproject.model.Package;
++import com.example.gymproject.util.DatabaseConnection;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.annotation.WebServlet;
++import jakarta.servlet.http.HttpServlet;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import java.io.IOException;
++import java.sql.Connection;
++import java.sql.PreparedStatement;
++import java.sql.ResultSet;
++import java.sql.SQLException;
++import java.util.ArrayList;
++import java.util.List;
++
++@WebServlet("/admin/packages")
++public class PackageServlet extends HttpServlet {
++
++    private static final long serialVersionUID = 1L;
++
++    protected void doGet(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++        if ("edit".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            Package pkg = getPackageById(id);
++            request.setAttribute("package", pkg);
++            request.getRequestDispatcher("/admin/edit_package.jsp").forward(request, response);
++        } else if ("delete".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            deletePackage(id);
++            response.sendRedirect(request.getContextPath() + "/admin/packages");
++        } else {
++            List<Package> packages = getAllPackages();
++            request.setAttribute("packages", packages);
++            request.getRequestDispatcher("/admin/manage_packages.jsp").forward(request, response);
++        }
++    }
++
++    protected void doPost(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++
++        if ("add".equals(action)) {
++            String name = request.getParameter("name");
++            String description = request.getParameter("description");
++            double price = Double.parseDouble(request.getParameter("price"));
++            int durationDays = Integer.parseInt(request.getParameter("duration"));
++
++            Package newPackage = new Package(0, name, description, price, durationDays);
++            addPackage(newPackage);
++            response.sendRedirect(request.getContextPath() + "/admin/packages");
++
++        } else if ("update".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            String name = request.getParameter("name");
++            String description = request.getParameter("description");
++            double price = Double.parseDouble(request.getParameter("price"));
++            int durationDays = Integer.parseInt(request.getParameter("duration"));
++
++            Package updatedPackage = new Package(id, name, description, price, durationDays);
++            updatePackage(updatedPackage);
++            response.sendRedirect(request.getContextPath() + "/admin/packages");
++        }
++    }
++
++    private List<Package> getAllPackages() {
++        List<Package> packages = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT * FROM packages";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                Package pkg = new Package();
++                pkg.setId(resultSet.getInt("id"));
++                pkg.setName(resultSet.getString("name"));
++                pkg.setDescription(resultSet.getString("description"));
++                pkg.setPrice(resultSet.getDouble("price"));
++                pkg.setDurationDays(resultSet.getInt("duration_days"));
++                packages.add(pkg);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return packages;
++    }
++
++    private Package getPackageById(int id) {
++        Package pkg = null;
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT * FROM packages WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            resultSet = preparedStatement.executeQuery();
++
++            if (resultSet.next()) {
++                pkg = new Package();
++                pkg.setId(resultSet.getInt("id"));
++                pkg.setName(resultSet.getString("name"));
++                pkg.setDescription(resultSet.getString("description"));
++                pkg.setPrice(resultSet.getDouble("price"));
++                pkg.setDurationDays(resultSet.getInt("duration_days"));
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return pkg;
++    }
++
++    private void addPackage(Package pkg) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "INSERT INTO packages (name, description, price, duration_days) VALUES (?, ?, ?, ?)";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setString(1, pkg.getName());
++            preparedStatement.setString(2, pkg.getDescription());
++            preparedStatement.setDouble(3, pkg.getPrice());
++            preparedStatement.setInt(4, pkg.getDurationDays());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void updatePackage(Package pkg) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "UPDATE packages SET name = ?, description = ?, price = ?, duration_days = ? WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setString(1, pkg.getName());
++            preparedStatement.setString(2, pkg.getDescription());
++            preparedStatement.setDouble(3, pkg.getPrice());
++            preparedStatement.setInt(4, pkg.getDurationDays());
++            preparedStatement.setInt(5, pkg.getId());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void deletePackage(int id) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "DELETE FROM packages WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/controller/AdminLoginServlet.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/controller/AdminLoginServlet.java b/src/main/java/com/example/gymproject/controller/AdminLoginServlet.java
+new file mode 100644
+--- /dev/null	(date 1745582977497)
++++ b/src/main/java/com/example/gymproject/controller/AdminLoginServlet.java	(date 1745582977497)
+@@ -0,0 +1,47 @@
++package com.example.gymproject.controller;
++
++import com.example.gymproject.util.DatabaseConnection;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.annotation.WebServlet;
++import jakarta.servlet.http.HttpServlet;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import jakarta.servlet.http.HttpSession;
++
++import java.io.IOException;
++import java.sql.*;
++
++@WebServlet("/AdminLoginServlet")
++public class AdminLoginServlet extends HttpServlet {
++    private static final long serialVersionUID = 1L;
++
++    protected void doPost(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++
++        String username = request.getParameter("username");
++        String password = request.getParameter("password");
++
++        try (Connection conn = DatabaseConnection.getConnection()) {
++            String query = "SELECT * FROM admins WHERE username = ? AND password = ?";
++            PreparedStatement ps = conn.prepareStatement(query);
++            ps.setString(1, username);
++            ps.setString(2, password); // NOTE: use hashing in real apps
++
++            ResultSet rs = ps.executeQuery();
++
++            if (rs.next()) {
++                // Valid login
++                HttpSession session = request.getSession();
++                session.setAttribute("admin", username);
++                response.sendRedirect("admin/dashboard.jsp");
++            } else {
++                // Invalid login
++                response.sendRedirect("admin/login.jsp?error=invalid");
++            }
++
++        } catch (Exception e) {
++            e.printStackTrace();
++            response.getWriter().println("Database connection error: " + e.getMessage());
++        }
++    }
++}
+Index: src/main/webapp/admin/edit_package.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/edit_package.jsp b/src/main/webapp/admin/edit_package.jsp
+new file mode 100644
+--- /dev/null	(date 1745562740989)
++++ b/src/main/webapp/admin/edit_package.jsp	(date 1745562740989)
+@@ -0,0 +1,155 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="com.example.gymproject.model.Package" %>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Edit Package</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 20px;
++    }
++
++    .container {
++      max-width: 600px;
++      margin: 0 auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .form-group {
++      margin-bottom: 15px;
++    }
++
++    label {
++      display: block;
++      margin-bottom: 5px;
++      color: #555;
++      font-weight: bold;
++    }
++
++    input[type="text"],
++    input[type="number"],
++    textarea {
++      width: calc(100% - 12px);
++      padding: 10px;
++      border: 1px solid #ccc;
++      border-radius: 4px;
++      box-sizing: border-box;
++      font-size: 16px;
++    }
++
++    textarea {
++      resize: vertical;
++      min-height: 80px;
++    }
++
++    button[type="submit"] {
++      background-color: #007bff;
++      color: white;
++      padding: 12px 20px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      font-size: 16px;
++      transition: background-color 0.3s ease;
++      width: 100%;
++    }
++
++    button[type="submit"]:hover {
++      background-color: #0056b3;
++    }
++
++    .button-container {
++      margin-top: 20px;
++      text-align: center;
++    }
++
++    .back-button {
++      display: inline-block;
++      padding: 10px 15px;
++      text-decoration: none;
++      background-color: #6c757d;
++      color: white;
++      border-radius: 4px;
++      transition: background-color 0.3s ease;
++      margin-right: 10px;
++    }
++
++    .back-button:hover {
++      background-color: #5a6268;
++    }
++
++    .error-message {
++      color: red;
++      margin-top: 10px;
++      text-align: center;
++    }
++  </style>
++</head>
++<body>
++<div class="container">
++  <h1>Edit Package</h1>
++
++  <%
++    Package packageToEdit = (Package) request.getAttribute("package");
++    if (packageToEdit == null) {
++  %>
++  <p class="error-message">Package not found.</p>
++  <div class="button-container">
++    <a href="${pageContext.request.contextPath}/admin/packages" class="back-button">Back to Packages</a>
++  </div>
++  <%
++  } else {
++  %>
++  <% if (request.getAttribute("errorMessage") != null) { %>
++  <div class="error-message"><%= request.getAttribute("errorMessage") %></div>
++  <% } %>
++
++  <form action="${pageContext.request.contextPath}/admin/packages" method="post">
++    <input type="hidden" name="action" value="update">
++    <input type="hidden" name="id" value="<%= packageToEdit.getId() %>">
++
++    <div class="form-group">
++      <label for="name">Package Name:</label>
++      <input type="text" id="name" name="name" value="<%= packageToEdit.getName() %>" required>
++    </div>
++
++    <div class="form-group">
++      <label for="description">Description:</label>
++      <textarea id="description" name="description"><%= packageToEdit.getDescription() %></textarea>
++    </div>
++
++    <div class="form-group">
++      <label for="price">Price:</label>
++      <input type="number" id="price" name="price" step="0.01" value="<%= packageToEdit.getPrice() %>" required>
++    </div>
++
++    <div class="form-group">
++      <label for="durationDays">Duration (Days):</label>
++      <input type="number" id="durationDays" name="durationDays" value="<%= packageToEdit.getDurationDays() %>" required>
++    </div>
++
++    <div class="button-container">
++      <button type="submit">Update Package</button>
++      <a href="${pageContext.request.contextPath}/admin/packages" class="back-button">Back to Packages</a>
++    </div>
++  </form>
++  <%
++    }
++  %>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/controller/UserServlet.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/controller/UserServlet.java b/src/main/java/com/example/gymproject/controller/UserServlet.java
+new file mode 100644
+--- /dev/null	(date 1745527557423)
++++ b/src/main/java/com/example/gymproject/controller/UserServlet.java	(date 1745527557423)
+@@ -0,0 +1,211 @@
++package com.example.gymproject.controller;
++
++import com.example.gymproject.model.User;
++import com.example.gymproject.util.DatabaseConnection;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.annotation.WebServlet;
++import jakarta.servlet.http.HttpServlet;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import java.io.IOException;
++import java.sql.Connection;
++import java.sql.Date;
++import java.sql.PreparedStatement;
++import java.sql.ResultSet;
++import java.sql.SQLException;
++import java.util.ArrayList;
++import java.util.List;
++
++@WebServlet("/admin/users")
++public class UserServlet extends HttpServlet {
++
++    private static final long serialVersionUID = 1L;
++
++    protected void doGet(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++        if ("edit".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            User user = getUserById(id);
++            request.setAttribute("user", user);
++            request.getRequestDispatcher("/admin/edit_user.jsp").forward(request, response);
++        } else if ("delete".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            deleteUser(id);
++            response.sendRedirect(request.getContextPath() + "/admin/users");
++        } else {
++            List<User> users = getAllUsers();
++            request.setAttribute("users", users);
++            request.getRequestDispatcher("/admin/manage_users.jsp").forward(request, response);
++        }
++    }
++
++    protected void doPost(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++
++        if ("add".equals(action)) {
++            String name = request.getParameter("name");
++            String email = request.getParameter("email");
++            String phone = request.getParameter("phone");
++            Date startDate = parseDate(request.getParameter("membershipStartDate"));
++            Date endDate = parseDate(request.getParameter("membershipEndDate"));
++
++            User newUser = new User(name, email, phone, startDate, endDate);
++            addUser(newUser);
++            response.sendRedirect(request.getContextPath() + "/admin/users");
++
++        } else if ("update".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            String name = request.getParameter("name");
++            String email = request.getParameter("email");
++            String phone = request.getParameter("phone");
++            Date startDate = parseDate(request.getParameter("membershipStartDate"));
++            Date endDate = parseDate(request.getParameter("membershipEndDate"));
++
++            User updatedUser = new User(id, name, email, phone, startDate, endDate);
++            updateUser(updatedUser);
++            response.sendRedirect(request.getContextPath() + "/admin/users");
++        }
++    }
++
++    private Date parseDate(String dateString) {
++        if (dateString != null && !dateString.isEmpty()) {
++            try {
++                return Date.valueOf(dateString);
++            } catch (IllegalArgumentException e) {
++                // Handle invalid date format if needed
++                e.printStackTrace();
++                return null;
++            }
++        }
++        return null;
++    }
++
++    private List<User> getAllUsers() {
++        List<User> users = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT * FROM users";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                User user = new User();
++                user.setId(resultSet.getInt("id"));
++                user.setName(resultSet.getString("name"));
++                user.setEmail(resultSet.getString("email"));
++                user.setPhone(resultSet.getString("phone"));
++                user.setMembershipStartDate(resultSet.getDate("membership_start_date"));
++                user.setMembershipEndDate(resultSet.getDate("membership_end_date"));
++                users.add(user);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return users;
++    }
++
++    private User getUserById(int id) {
++        User user = null;
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT * FROM users WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            resultSet = preparedStatement.executeQuery();
++
++            if (resultSet.next()) {
++                user = new User();
++                user.setId(resultSet.getInt("id"));
++                user.setName(resultSet.getString("name"));
++                user.setEmail(resultSet.getString("email"));
++                user.setPhone(resultSet.getString("phone"));
++                user.setMembershipStartDate(resultSet.getDate("membership_start_date"));
++                user.setMembershipEndDate(resultSet.getDate("membership_end_date"));
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return user;
++    }
++
++    private void addUser(User user) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "INSERT INTO users (name, email, phone, membership_start_date, membership_end_date) VALUES (?, ?, ?, ?, ?)";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setString(1, user.getName());
++            preparedStatement.setString(2, user.getEmail());
++            preparedStatement.setString(3, user.getPhone());
++            preparedStatement.setDate(4, (Date) user.getMembershipStartDate());
++            preparedStatement.setDate(5, (Date) user.getMembershipEndDate());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void updateUser(User user) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "UPDATE users SET name = ?, email = ?, phone = ?, membership_start_date = ?, membership_end_date = ? WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setString(1, user.getName());
++            preparedStatement.setString(2, user.getEmail());
++            preparedStatement.setString(3, user.getPhone());
++            preparedStatement.setDate(4, (Date) user.getMembershipStartDate());
++            preparedStatement.setDate(5, (Date) user.getMembershipEndDate());
++            preparedStatement.setInt(6, user.getId());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void deleteUser(int id) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "DELETE FROM users WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++}
+\ No newline at end of file
+Index: src/main/webapp/admin/manage_payments.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/manage_payments.jsp b/src/main/webapp/admin/manage_payments.jsp
+new file mode 100644
+--- /dev/null	(date 1745562914200)
++++ b/src/main/webapp/admin/manage_payments.jsp	(date 1745562914200)
+@@ -0,0 +1,167 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="java.util.List" %>
++<%@ page import="com.example.gymproject.model.Payment" %>
++<%@ page import="java.text.SimpleDateFormat" %>
++<%@ page import="java.text.NumberFormat" %>
++<%@ page import="java.util.Locale" %>
++<!DOCTYPE html>
++<html>
++<head>
++    <meta charset="UTF-8">
++    <title>Manage Payments</title>
++    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++    <style>
++        body {
++            font-family: Arial, sans-serif;
++            background-color: #f4f4f4;
++            margin: 0;
++            padding: 20px;
++        }
++
++        .container {
++            max-width: 960px;
++            margin: 0 auto;
++            background-color: #fff;
++            padding: 20px;
++            border-radius: 8px;
++            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++        }
++
++        h1 {
++            color: #333;
++            text-align: center;
++            margin-bottom: 20px;
++        }
++
++        .record-button-container {
++            text-align: right;
++            margin-bottom: 15px;
++        }
++
++        .record-button {
++            background-color: #007bff;
++            color: white;
++            padding: 10px 15px;
++            border: none;
++            border-radius: 4px;
++            cursor: pointer;
++            text-decoration: none;
++            font-size: 16px;
++            transition: background-color 0.3s ease;
++        }
++
++        .record-button:hover {
++            background-color: #0056b3;
++        }
++
++        table {
++            width: 100%;
++            border-collapse: collapse;
++            margin-top: 15px;
++        }
++
++        th, td {
++            padding: 10px;
++            border-bottom: 1px solid #ddd;
++            text-align: left;
++        }
++
++        th {
++            background-color: #f2f2f2;
++            font-weight: bold;
++        }
++
++        tr:hover {
++            background-color: #f9f9f9;
++        }
++
++        .action-buttons a {
++            display: inline-block;
++            margin-right: 5px;
++            text-decoration: none;
++            background-color: #6c757d;
++            color: white;
++            padding: 8px 12px;
++            border-radius: 4px;
++            font-size: 14px;
++            transition: background-color 0.3s ease;
++        }
++
++        .action-buttons a:hover {
++            background-color: #5a6268;
++        }
++
++        .recurring-yes {
++            color: green;
++            font-weight: bold;
++        }
++
++        .recurring-no {
++            color: red;
++        }
++    </style>
++</head>
++<body>
++<div class="container">
++    <h1>Manage Payments</h1>
++
++    <div class="record-button-container">
++        <a href="${pageContext.request.contextPath}/admin/payments?action=record" class="record-button">Record New Payment</a>
++    </div>
++
++    <%
++        List<Payment> payments = (List<Payment>) request.getAttribute("payments");
++        if (payments != null && !payments.isEmpty()) {
++            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
++            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault()); // You might want to specify a locale
++    %>
++    <table>
++        <thead>
++        <tr>
++            <th>ID</th>
++            <th>User</th>
++            <th>Package</th>
++            <th>Payment Date</th>
++            <th>Amount</th>
++            <th>Type</th>
++            <th>Recurring</th>
++            <th>Actions</th>
++        </tr>
++        </thead>
++        <tbody>
++        <% for (Payment payment : payments) { %>
++        <tr>
++            <td><%= payment.getId() %></td>
++            <td><%= payment.getUser().getName() %></td>
++            <td><%= payment.getPackage().getName() %></td>
++            <td><%= dateFormat.format(payment.getPaymentDate()) %></td>
++            <td><%= currencyFormat.format(payment.getAmount()) %></td>
++            <td><%= payment.getPaymentType() %></td>
++            <td>
++                <% if (payment.isRecurring()) { %>
++                <span class="recurring-yes">Yes</span>
++                <% } else { %>
++                <span class="recurring-no">No</span>
++                <% } %>
++            </td>
++            <td class="action-buttons">
++                <a href="${pageContext.request.contextPath}/admin/payments?action=view&id=<%= payment.getId() %>">View</a>
++            </td>
++        </tr>
++        <% } %>
++        </tbody>
++    </table>
++    <%
++    } else {
++    %>
++    <p>No payments recorded yet.</p>
++    <%
++        }
++    %>
++
++    <div style="margin-top: 20px;">
++        <a href="${pageContext.request.contextPath}/admin/dashboard">Back to Dashboard</a>
++    </div>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/controller/TrainerServlet.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/controller/TrainerServlet.java b/src/main/java/com/example/gymproject/controller/TrainerServlet.java
+new file mode 100644
+--- /dev/null	(date 1745527834495)
++++ b/src/main/java/com/example/gymproject/controller/TrainerServlet.java	(date 1745527834495)
+@@ -0,0 +1,179 @@
++package com.example.gymproject.controller;
++
++import com.example.gymproject.model.Trainer;
++import com.example.gymproject.util.DatabaseConnection;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.annotation.WebServlet;
++import jakarta.servlet.http.HttpServlet;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import java.io.IOException;
++import java.sql.Connection;
++import java.sql.PreparedStatement;
++import java.sql.ResultSet;
++import java.sql.SQLException;
++import java.util.ArrayList;
++import java.util.List;
++
++@WebServlet("/admin/trainers")
++public class TrainerServlet extends HttpServlet {
++
++    private static final long serialVersionUID = 1L;
++
++    protected void doGet(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++        if ("edit".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            Trainer trainer = getTrainerById(id);
++            request.setAttribute("trainer", trainer);
++            request.getRequestDispatcher("/admin/edit_trainer.jsp").forward(request, response);
++        } else if ("delete".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            deleteTrainer(id);
++            response.sendRedirect(request.getContextPath() + "/admin/trainers");
++        } else {
++            List<Trainer> trainers = getAllTrainers();
++            request.setAttribute("trainers", trainers);
++            request.getRequestDispatcher("/admin/manage_trainers.jsp").forward(request, response);
++        }
++    }
++
++    protected void doPost(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++
++        if ("add".equals(action)) {
++            String name = request.getParameter("name");
++            String specialization = request.getParameter("specialization");
++
++            Trainer newTrainer = new Trainer(name, specialization);
++            addTrainer(newTrainer);
++            response.sendRedirect(request.getContextPath() + "/admin/trainers");
++
++        } else if ("update".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            String name = request.getParameter("name");
++            String specialization = request.getParameter("specialization");
++
++            Trainer updatedTrainer = new Trainer(id, name, specialization);
++            updateTrainer(updatedTrainer);
++            response.sendRedirect(request.getContextPath() + "/admin/trainers");
++        }
++    }
++
++    private List<Trainer> getAllTrainers() {
++        List<Trainer> trainers = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT * FROM trainers";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                Trainer trainer = new Trainer();
++                trainer.setId(resultSet.getInt("id"));
++                trainer.setName(resultSet.getString("name"));
++                trainer.setSpecialization(resultSet.getString("specialization"));
++                trainers.add(trainer);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return trainers;
++    }
++
++    private Trainer getTrainerById(int id) {
++        Trainer trainer = null;
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT * FROM trainers WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            resultSet = preparedStatement.executeQuery();
++
++            if (resultSet.next()) {
++                trainer = new Trainer();
++                trainer.setId(resultSet.getInt("id"));
++                trainer.setName(resultSet.getString("name"));
++                trainer.setSpecialization(resultSet.getString("specialization"));
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return trainer;
++    }
++
++    private void addTrainer(Trainer trainer) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "INSERT INTO trainers (name, specialization) VALUES (?, ?)";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setString(1, trainer.getName());
++            preparedStatement.setString(2, trainer.getSpecialization());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void updateTrainer(Trainer trainer) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "UPDATE trainers SET name = ?, specialization = ? WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setString(1, trainer.getName());
++            preparedStatement.setString(2, trainer.getSpecialization());
++            preparedStatement.setInt(3, trainer.getId());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void deleteTrainer(int id) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "DELETE FROM trainers WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/model/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/model/User.java b/src/main/java/com/example/gymproject/model/User.java
+new file mode 100644
+--- /dev/null	(date 1745527298539)
++++ b/src/main/java/com/example/gymproject/model/User.java	(date 1745527298539)
+@@ -0,0 +1,111 @@
++package com.example.gymproject.model;
++
++import java.util.Date;
++
++public class User {
++    private int id;
++    private String name;
++    private String email;
++    private String phone;
++    private Date membershipStartDate;
++    private Date membershipEndDate;
++
++    // Default constructor (required by some frameworks)
++    public User() {
++    }
++
++    // Constructor with all fields
++    public User(int id, String name, String email, String phone, Date membershipStartDate, Date membershipEndDate) {
++        this.id = id;
++        this.name = name;
++        this.email = email;
++        this.phone = phone;
++        this.membershipStartDate = membershipStartDate;
++        this.membershipEndDate = membershipEndDate;
++    }
++
++    // Constructor without ID (for adding new users)
++    public User(String name, String email, String phone, Date membershipStartDate, Date membershipEndDate) {
++        this.name = name;
++        this.email = email;
++        this.phone = phone;
++        this.membershipStartDate = membershipStartDate;
++        this.membershipEndDate = membershipEndDate;
++    }
++
++    // Constructor without membership dates (if you're handling that separately initially)
++    public User(int id, String name, String email, String phone) {
++        this.id = id;
++        this.name = name;
++        this.email = email;
++        this.phone = phone;
++    }
++
++    public User(String name, String email, String phone) {
++        this.name = name;
++        this.email = email;
++        this.phone = phone;
++    }
++
++
++    // Getters and Setters for all fields
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public String getEmail() {
++        return email;
++    }
++
++    public void setEmail(String email) {
++        this.email = email;
++    }
++
++    public String getPhone() {
++        return phone;
++    }
++
++    public void setPhone(String phone) {
++        this.phone = phone;
++    }
++
++    public Date getMembershipStartDate() {
++        return membershipStartDate;
++    }
++
++    public void setMembershipStartDate(Date membershipStartDate) {
++        this.membershipStartDate = membershipStartDate;
++    }
++
++    public Date getMembershipEndDate() {
++        return membershipEndDate;
++    }
++
++    public void setMembershipEndDate(Date membershipEndDate) {
++        this.membershipEndDate = membershipEndDate;
++    }
++
++    @Override
++    public String toString() {
++        return "User{" +
++                "id=" + id +
++                ", name='" + name + '\'' +
++                ", email='" + email + '\'' +
++                ", phone='" + phone + '\'' +
++                ", membershipStartDate=" + membershipStartDate +
++                ", membershipEndDate=" + membershipEndDate +
++                '}';
++    }
++}
+\ No newline at end of file
+Index: src/main/webapp/admin/add_package.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/add_package.jsp b/src/main/webapp/admin/add_package.jsp
+new file mode 100644
+--- /dev/null	(date 1745562604667)
++++ b/src/main/webapp/admin/add_package.jsp	(date 1745562604667)
+@@ -0,0 +1,139 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Add New Package</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 20px;
++    }
++
++    .container {
++      max-width: 600px;
++      margin: 0 auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .form-group {
++      margin-bottom: 15px;
++    }
++
++    label {
++      display: block;
++      margin-bottom: 5px;
++      color: #555;
++      font-weight: bold;
++    }
++
++    input[type="text"],
++    input[type="number"],
++    textarea {
++      width: calc(100% - 12px);
++      padding: 10px;
++      border: 1px solid #ccc;
++      border-radius: 4px;
++      box-sizing: border-box;
++      font-size: 16px;
++    }
++
++    textarea {
++      resize: vertical;
++      min-height: 80px;
++    }
++
++    button[type="submit"] {
++      background-color: #28a745;
++      color: white;
++      padding: 12px 20px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      font-size: 16px;
++      transition: background-color 0.3s ease;
++      width: 100%;
++    }
++
++    button[type="submit"]:hover {
++      background-color: #1e7e34;
++    }
++
++    .button-container {
++      margin-top: 20px;
++      text-align: center;
++    }
++
++    .back-button {
++      display: inline-block;
++      padding: 10px 15px;
++      text-decoration: none;
++      background-color: #007bff;
++      color: white;
++      border-radius: 4px;
++      transition: background-color 0.3s ease;
++      margin-right: 10px;
++    }
++
++    .back-button:hover {
++      background-color: #0056b3;
++    }
++
++    .error-message {
++      color: red;
++      margin-top: 10px;
++      text-align: center;
++    }
++  </style>
++</head>
++<body>
++<div class="container">
++  <h1>Add New Package</h1>
++
++  <% if (request.getAttribute("errorMessage") != null) { %>
++  <div class="error-message"><%= request.getAttribute("errorMessage") %></div>
++  <% } %>
++
++  <form action="${pageContext.request.contextPath}/admin/packages" method="post">
++    <input type="hidden" name="action" value="add">
++
++    <div class="form-group">
++      <label for="name">Package Name:</label>
++      <input type="text" id="name" name="name" required>
++    </div>
++
++    <div class="form-group">
++      <label for="description">Description:</label>
++      <textarea id="description" name="description"></textarea>
++    </div>
++
++    <div class="form-group">
++      <label for="price">Price:</label>
++      <input type="number" id="price" name="price" step="0.01" required>
++    </div>
++
++    <div class="form-group">
++      <label for="durationDays">Duration (Days):</label>
++      <input type="number" id="durationDays" name="durationDays" required>
++    </div>
++
++    <div class="button-container">
++      <button type="submit">Add Package</button>
++      <a href="${pageContext.request.contextPath}/admin/packages" class="back-button">Back to Packages</a>
++    </div>
++  </form>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/webapp/admin/reports.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/reports.jsp b/src/main/webapp/admin/reports.jsp
+new file mode 100644
+--- /dev/null	(date 1745563318622)
++++ b/src/main/webapp/admin/reports.jsp	(date 1745563318622)
+@@ -0,0 +1,252 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="com.example.gymproject.model.Attendance" %>
++<!DOCTYPE html>
++<html>
++<head>
++    <meta charset="UTF-8">
++    <title>Gym Management Reports</title>
++    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++    <style>
++        body {
++            font-family: Arial, sans-serif;
++            background-color: #f4f4f4;
++            margin: 0;
++            padding: 20px;
++        }
++
++        .container {
++            max-width: 960px;
++            margin: 0 auto;
++            background-color: #fff;
++            padding: 20px;
++            border-radius: 8px;
++            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++        }
++
++        h1 {
++            color: #333;
++            text-align: center;
++            margin-bottom: 20px;
++        }
++
++        .report-options {
++            margin-bottom: 20px;
++            padding: 15px;
++            border: 1px solid #ddd;
++            border-radius: 4px;
++            background-color: #f9f9f9;
++        }
++
++        .report-options h2 {
++            color: #555;
++            margin-top: 0;
++            margin-bottom: 10px;
++        }
++
++        .report-options form {
++            display: flex;
++            align-items: center;
++            gap: 15px;
++        }
++
++        .report-options label {
++            font-weight: bold;
++            color: #555;
++        }
++
++        .report-options select,
++        .report-options input[type="date"] {
++            padding: 8px;
++            border: 1px solid #ccc;
++            border-radius: 4px;
++            font-size: 16px;
++        }
++
++        .report-options button[type="submit"] {
++            background-color: #007bff;
++            color: white;
++            padding: 10px 15px;
++            border: none;
++            border-radius: 4px;
++            cursor: pointer;
++            font-size: 16px;
++            transition: background-color 0.3s ease;
++        }
++
++        .report-options button[type="submit"]:hover {
++            background-color: #0056b3;
++        }
++
++        .report-output {
++            margin-top: 20px;
++            padding: 15px;
++            border: 1px solid #ddd;
++            border-radius: 4px;
++            background-color: #f9f9f9;
++        }
++
++        .report-output h2 {
++            color: #555;
++            margin-top: 0;
++            margin-bottom: 10px;
++        }
++
++        .report-output p {
++            color: #333;
++        }
++
++        .report-output table {
++            width: 100%;
++            border-collapse: collapse;
++            margin-top: 10px;
++        }
++
++        .report-output th, .report-output td {
++            padding: 8px;
++            border-bottom: 1px solid #eee;
++            text-align: left;
++        }
++
++        .report-output th {
++            background-color: #f2f2f2;
++            font-weight: bold;
++        }
++
++        .back-button-container {
++            margin-top: 20px;
++            text-align: center;
++        }
++
++        .back-button {
++            display: inline-block;
++            padding: 10px 15px;
++            text-decoration: none;
++            background-color: #6c757d;
++            color: white;
++            border-radius: 4px;
++            transition: background-color 0.3s ease;
++        }
++
++        .back-button:hover {
++            background-color: #5a6268;
++        }
++
++        .error-message {
++            color: red;
++            margin-top: 10px;
++            text-align: center;
++        }
++    </style>
++</head>
++<body>
++<div class="container">
++    <h1>Gym Management Reports</h1>
++
++    <div class="report-options">
++        <h2>Generate Reports</h2>
++        <% if (request.getAttribute("reportError") != null) { %>
++        <p class="error-message"><%= request.getAttribute("reportError") %></p>
++        <% } %>
++        <form action="${pageContext.request.contextPath}/admin/reports" method="get">
++            <label for="reportType">Report Type:</label>
++            <select id="reportType" name="reportType">
++                <option value="member_attendance">Member Attendance</option>
++                <option value="payment_summary">Payment Summary</option>
++                <option value="package_usage">Package Usage</option>
++            </select>
++
++            <label for="startDate">Start Date:</label>
++            <input type="date" id="startDate" name="startDate">
++
++            <label for="endDate">End Date:</label>
++            <input type="date" id="endDate" name="endDate">
++
++            <button type="submit">Generate Report</button>
++        </form>
++    </div>
++
++    <% if (request.getAttribute("reportType") != null) { %>
++    <div class="report-output">
++        <h2><%= request.getAttribute("reportTitle") %></h2>
++        <% if (request.getAttribute("reportData") == null || ((java.util.List)request.getAttribute("reportData")).isEmpty()) { %>
++        <p>No data available for the selected report criteria.</p>
++        <% } else {
++            String reportType = (String) request.getAttribute("reportType");
++            if ("member_attendance".equals(reportType)) { %>
++        <table>
++            <thead>
++            <tr>
++                <th>Member Name</th>
++                <th>Attendance Date</th>
++                <th>Check-in Time</th>
++                <th>Check-out Time</th>
++            </tr>
++            </thead>
++            <tbody>
++            <% java.util.List attendanceList = (java.util.List) request.getAttribute("reportData");
++                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
++                for (Object attendanceObj : attendanceList) {
++                    com.example.gymproject.model.Attendance attendance = (com.example.gymproject.model.Attendance) attendanceObj; %>
++            <tr>
++                <td><%= attendance.getUser().getName() %></td>
++                <td><%= attendance.getAttendanceDate() %></td>
++                <td><%= (attendance.getCheckInTime() != null) ? sdf.format(attendance.getCheckInTime()) : "" %></td>
++                <td><%= (attendance.getCheckOutTime() != null) ? sdf.format(attendance.getCheckOutTime()) : "" %></td>
++            </tr>
++            <%  } %>
++            </tbody>
++        </table>
++        <% } else if ("payment_summary".equals(reportType)) { %>
++        <table>
++            <thead>
++            <tr>
++                <th>Payment Date</th>
++                <th>Total Amount</th>
++                <th>Number of Payments</th>
++            </tr>
++            </thead>
++            <tbody>
++            <% java.util.List paymentSummaryList = (java.util.List) request.getAttribute("reportData");
++                java.text.NumberFormat currencyFormat = java.text.NumberFormat.getCurrencyInstance(java.util.Locale.getDefault());
++                for (Object summaryObj : paymentSummaryList) {
++                    Object[] summary = (Object[]) summaryObj; %>
++            <tr>
++                <td><%= summary[0] %></td>
++                <td><%= currencyFormat.format(summary[1]) %></td>
++                <td><%= summary[2] %></td>
++            </tr>
++            <%  } %>
++            </tbody>
++        </table>
++        <% } else if ("package_usage".equals(reportType)) { %>
++        <table>
++            <thead>
++            <tr>
++                <th>Package Name</th>
++                <th>Number of Users</th>
++            </tr>
++            </thead>
++            <tbody>
++            <% java.util.List packageUsageList = (java.util.List) request.getAttribute("reportData");
++                for (Object usageObj : packageUsageList) {
++                    Object[] usage = (Object[]) usageObj; %>
++            <tr>
++                <td><%= usage[0] %></td>
++                <td><%= usage[1] %></td>
++            </tr>
++            <%  } %>
++            </tbody>
++        </table>
++        <% } else { %>
++        <p>Report type not supported for display here.</p>
++        <% } %>
++        <% } %>
++    </div>
++    <% } %>
++
++    <div class="back-button-container">
++        <a href="${pageContext.request.contextPath}/admin/dashboard" class="back-button">Back to Dashboard</a>
++    </div>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/controller/ShiftServlet.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/controller/ShiftServlet.java b/src/main/java/com/example/gymproject/controller/ShiftServlet.java
+new file mode 100644
+--- /dev/null	(date 1745532111505)
++++ b/src/main/java/com/example/gymproject/controller/ShiftServlet.java	(date 1745532111505)
+@@ -0,0 +1,204 @@
++package com.example.gymproject.controller;
++
++import com.example.gymproject.model.Shift;
++import com.example.gymproject.util.DatabaseConnection;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.annotation.WebServlet;
++import jakarta.servlet.http.HttpServlet;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import java.io.IOException;
++import java.sql.Connection;
++import java.sql.PreparedStatement;
++import java.sql.ResultSet;
++import java.sql.SQLException;
++import java.sql.Time;
++import java.util.ArrayList;
++import java.util.List;
++
++@WebServlet("/admin/shifts")
++public class ShiftServlet extends HttpServlet {
++
++    private static final long serialVersionUID = 1L;
++
++    protected void doGet(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++        if ("edit".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            Shift shift = getShiftById(id);
++            request.setAttribute("shift", shift);
++            request.getRequestDispatcher("/admin/edit_shift.jsp").forward(request, response);
++        } else if ("delete".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            deleteShift(id);
++            response.sendRedirect(request.getContextPath() + "/admin/shifts");
++        } else {
++            List<Shift> shifts = getAllShifts();
++            request.setAttribute("shifts", shifts);
++            request.getRequestDispatcher("/admin/manage_shifts.jsp").forward(request, response);
++        }
++    }
++
++    protected void doPost(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++
++        if ("add".equals(action)) {
++            String name = request.getParameter("name");
++            Time startTime = parseTime(request.getParameter("startTime"));
++            Time endTime = parseTime(request.getParameter("endTime"));
++            String dayOfWeek = request.getParameter("dayOfWeek");
++
++            Shift newShift = new Shift(name, startTime, endTime, dayOfWeek);
++            addShift(newShift);
++            response.sendRedirect(request.getContextPath() + "/admin/shifts");
++
++        } else if ("update".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            String name = request.getParameter("name");
++            Time startTime = parseTime(request.getParameter("startTime"));
++            Time endTime = parseTime(request.getParameter("endTime"));
++            String dayOfWeek = request.getParameter("dayOfWeek");
++
++            Shift updatedShift = new Shift(id, name, startTime, endTime, dayOfWeek);
++            updateShift(updatedShift);
++            response.sendRedirect(request.getContextPath() + "/admin/shifts");
++        }
++    }
++
++    private Time parseTime(String timeString) {
++        if (timeString != null && !timeString.isEmpty()) {
++            try {
++                return Time.valueOf(timeString + ":00"); // Ensure seconds are included
++            } catch (IllegalArgumentException e) {
++                e.printStackTrace();
++                return null;
++            }
++        }
++        return null;
++    }
++
++    private List<Shift> getAllShifts() {
++        List<Shift> shifts = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT * FROM shifts ORDER BY day_of_week, start_time";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                Shift shift = new Shift();
++                shift.setId(resultSet.getInt("id")); // Corrected line
++                shift.setName(resultSet.getString("name"));
++                shift.setStartTime(resultSet.getTime("start_time"));
++                shift.setEndTime(resultSet.getTime("end_time"));
++                shift.setDayOfWeek(resultSet.getString("day_of_week"));
++                shifts.add(shift);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return shifts;
++    }
++
++    private Shift getShiftById(int id) {
++        Shift shift = null;
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT * FROM shifts WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            resultSet = preparedStatement.executeQuery();
++
++            if (resultSet.next()) {
++                shift = new Shift();
++                shift.setId(resultSet.getInt("id"));
++                shift.setName(resultSet.getString("name"));
++                shift.setStartTime(resultSet.getTime("start_time"));
++                shift.setEndTime(resultSet.getTime("end_time"));
++                shift.setDayOfWeek(resultSet.getString("day_of_week"));
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return shift;
++    }
++
++    private void addShift(Shift shift) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "INSERT INTO shifts (name, start_time, end_time, day_of_week) VALUES (?, ?, ?, ?)";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setString(1, shift.getName());
++            preparedStatement.setTime(2, shift.getStartTime());
++            preparedStatement.setTime(3, shift.getEndTime());
++            preparedStatement.setString(4, shift.getDayOfWeek());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void updateShift(Shift shift) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "UPDATE shifts SET name = ?, start_time = ?, end_time = ?, day_of_week = ? WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setString(1, shift.getName());
++            preparedStatement.setTime(2, shift.getStartTime());
++            preparedStatement.setTime(3, shift.getEndTime());
++            preparedStatement.setString(4, shift.getDayOfWeek());
++            preparedStatement.setInt(5, shift.getId());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void deleteShift(int id) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "DELETE FROM shifts WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/model/Admin.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/model/Admin.java b/src/main/java/com/example/gymproject/model/Admin.java
+new file mode 100644
+--- /dev/null	(date 1745528264144)
++++ b/src/main/java/com/example/gymproject/model/Admin.java	(date 1745528264144)
+@@ -0,0 +1,58 @@
++package com.example.gymproject.model;
++
++public class Admin {
++    private int id;
++    private String username;
++    private String password; // In a real application, this should only be stored as a hash
++
++    // Default constructor
++    public Admin() {
++    }
++
++    // Constructor with all fields
++    public Admin(int id, String username, String password) {
++        this.id = id;
++        this.username = username;
++        this.password = password;
++    }
++
++    // Constructor without ID (for adding new admins)
++    public Admin(String username, String password) {
++        this.username = username;
++        this.password = password;
++    }
++
++    // Getters and Setters
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public String getUsername() {
++        return username;
++    }
++
++    public void setUsername(String username) {
++        this.username = username;
++    }
++
++    public String getPassword() {
++        return password;
++    }
++
++    public void setPassword(String password) {
++        this.password = password;
++    }
++
++    @Override
++    public String toString() {
++        return "Admin{" +
++                "id=" + id +
++                ", username='" + username + '\'' +
++                ", password='[PROTECTED]'" + // Don't print the actual password
++                '}';
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/controller/PaymentServlet.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/controller/PaymentServlet.java b/src/main/java/com/example/gymproject/controller/PaymentServlet.java
+new file mode 100644
+--- /dev/null	(date 1745527958199)
++++ b/src/main/java/com/example/gymproject/controller/PaymentServlet.java	(date 1745527958199)
+@@ -0,0 +1,235 @@
++package com.example.gymproject.controller;
++
++import com.example.gymproject.model.Package;
++import com.example.gymproject.model.Payment;
++import com.example.gymproject.model.User;
++import com.example.gymproject.util.DatabaseConnection;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.annotation.WebServlet;
++import jakarta.servlet.http.HttpServlet;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import java.io.IOException;
++import java.sql.Connection;
++import java.sql.Date;
++import java.sql.PreparedStatement;
++import java.sql.ResultSet;
++import java.sql.SQLException;
++import java.sql.Timestamp;
++import java.util.ArrayList;
++import java.util.List;
++
++@WebServlet("/admin/payments")
++public class PaymentServlet extends HttpServlet {
++
++    private static final long serialVersionUID = 1L;
++
++    protected void doGet(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++        if ("view".equals(action)) {
++            int id = Integer.parseInt(request.getParameter("id"));
++            Payment payment = getPaymentById(id);
++            request.setAttribute("payment", payment);
++            request.getRequestDispatcher("/admin/view_payments.jsp").forward(request, response); // Assuming a view_payments.jsp for details
++        } else if ("record".equals(action)) {
++            // Load users and packages for the record payment form
++            List<User> users = getAllUsers();
++            List<Package> packages = getAllPackages();
++            request.setAttribute("users", users);
++            request.setAttribute("packages", packages);
++            request.getRequestDispatcher("/admin/record_payment.jsp").forward(request, response);
++        } else {
++            List<Payment> payments = getAllPayments();
++            request.setAttribute("payments", payments);
++            request.getRequestDispatcher("/admin/manage_payments.jsp").forward(request, response);
++        }
++    }
++
++    protected void doPost(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++
++        if ("recordPayment".equals(action)) {
++            int userId = Integer.parseInt(request.getParameter("userId"));
++            int packageId = Integer.parseInt(request.getParameter("packageId"));
++            double amount = Double.parseDouble(request.getParameter("amount"));
++            String paymentType = request.getParameter("paymentType");
++            boolean recurring = Boolean.parseBoolean(request.getParameter("recurring"));
++
++            Payment newPayment = new Payment(0, userId, packageId, new Timestamp(System.currentTimeMillis()), amount, paymentType, recurring);
++            recordPayment(newPayment);
++            response.sendRedirect(request.getContextPath() + "/admin/payments");
++        }
++        // You might add logic for updating or deleting payments here if needed
++    }
++
++    private List<Payment> getAllPayments() {
++        List<Payment> payments = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT p.*, u.name AS user_name, pkg.name AS package_name " +
++                    "FROM payments p " +
++                    "JOIN users u ON p.user_id = u.id " +
++                    "JOIN packages pkg ON p.package_id = pkg.id";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                Payment payment = new Payment();
++                payment.setId(resultSet.getInt("id"));
++                payment.setUserId(resultSet.getInt("user_id"));
++                payment.setPackageId(resultSet.getInt("package_id"));
++                payment.setPaymentDate(resultSet.getTimestamp("payment_date"));
++                payment.setAmount(resultSet.getDouble("amount"));
++                payment.setPaymentType(resultSet.getString("payment_type"));
++                payment.setRecurring(resultSet.getBoolean("recurring"));
++
++                // Optionally fetch related user and package names for display
++                User user = new User();
++                user.setName(resultSet.getString("user_name"));
++                payment.setUser(user);
++                Package pkg = new Package();
++                pkg.setName(resultSet.getString("package_name"));
++                payment.setPackage(pkg);
++
++                payments.add(payment);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return payments;
++    }
++
++    private Payment getPaymentById(int id) {
++        Payment payment = null;
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT p.*, u.name AS user_name, pkg.name AS package_name " +
++                    "FROM payments p " +
++                    "JOIN users u ON p.user_id = u.id " +
++                    "JOIN packages pkg ON p.package_id = pkg.id " +
++                    "WHERE p.id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, id);
++            resultSet = preparedStatement.executeQuery();
++
++            if (resultSet.next()) {
++                payment = new Payment();
++                payment.setId(resultSet.getInt("id"));
++                payment.setUserId(resultSet.getInt("user_id"));
++                payment.setPackageId(resultSet.getInt("package_id"));
++                payment.setPaymentDate(resultSet.getTimestamp("payment_date"));
++                payment.setAmount(resultSet.getDouble("amount"));
++                payment.setPaymentType(resultSet.getString("payment_type"));
++                payment.setRecurring(resultSet.getBoolean("recurring"));
++
++                User user = new User();
++                user.setName(resultSet.getString("user_name"));
++                payment.setUser(user);
++                Package pkg = new Package();
++                pkg.setName(resultSet.getString("package_name"));
++                payment.setPackage(pkg);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return payment;
++    }
++
++    private void recordPayment(Payment payment) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "INSERT INTO payments (user_id, package_id, payment_date, amount, payment_type, recurring) VALUES (?, ?, ?, ?, ?, ?)";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, payment.getUserId());
++            preparedStatement.setInt(2, payment.getPackageId());
++            preparedStatement.setTimestamp(3, payment.getPaymentDate());
++            preparedStatement.setDouble(4, payment.getAmount());
++            preparedStatement.setString(5, payment.getPaymentType());
++            preparedStatement.setBoolean(6, payment.isRecurring());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    // Helper methods to fetch all users and packages for the record payment form
++    private List<User> getAllUsers() {
++        List<User> users = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT id, name FROM users";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                User user = new User();
++                user.setId(resultSet.getInt("id"));
++                user.setName(resultSet.getString("name"));
++                users.add(user);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return users;
++    }
++
++    private List<Package> getAllPackages() {
++        List<Package> packages = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT id, name FROM packages";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                Package pkg = new Package();
++                pkg.setId(resultSet.getInt("id"));
++                pkg.setName(resultSet.getString("name"));
++                packages.add(pkg);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return packages;
++    }
++}
+\ No newline at end of file
+Index: src/main/webapp/admin/record_payment.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/record_payment.jsp b/src/main/webapp/admin/record_payment.jsp
+new file mode 100644
+--- /dev/null	(date 1745563033499)
++++ b/src/main/webapp/admin/record_payment.jsp	(date 1745563033499)
+@@ -0,0 +1,177 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="java.util.List" %>
++<%@ page import="com.example.gymproject.model.User" %>
++<%@ page import="com.example.gymproject.model.Package" %>
++<%@ page import="java.sql.Timestamp" %>
++<%@ page import="java.util.Date" %>
++<%@ page import="java.text.SimpleDateFormat" %>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Record New Payment</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 20px;
++    }
++
++    .container {
++      max-width: 600px;
++      margin: 0 auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .form-group {
++      margin-bottom: 15px;
++    }
++
++    label {
++      display: block;
++      margin-bottom: 5px;
++      color: #555;
++      font-weight: bold;
++    }
++
++    select,
++    input[type="text"],
++    input[type="number"],
++    input[type="checkbox"] {
++      width: calc(100% - 12px);
++      padding: 10px;
++      border: 1px solid #ccc;
++      border-radius: 4px;
++      box-sizing: border-box;
++      font-size: 16px;
++    }
++
++    button[type="submit"] {
++      background-color: #28a745;
++      color: white;
++      padding: 12px 20px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      font-size: 16px;
++      transition: background-color 0.3s ease;
++      width: 100%;
++    }
++
++    button[type="submit"]:hover {
++      background-color: #1e7e34;
++    }
++
++    .button-container {
++      margin-top: 20px;
++      text-align: center;
++    }
++
++    .back-button {
++      display: inline-block;
++      padding: 10px 15px;
++      text-decoration: none;
++      background-color: #6c757d;
++      color: white;
++      border-radius: 4px;
++      transition: background-color 0.3s ease;
++      margin-right: 10px;
++    }
++
++    .back-button:hover {
++      background-color: #5a6268;
++    }
++
++    .error-message {
++      color: red;
++      margin-top: 10px;
++      text-align: center;
++    }
++  </style>
++</head>
++<body>
++<div class="container">
++  <h1>Record New Payment</h1>
++
++  <% if (request.getAttribute("errorMessage") != null) { %>
++  <div class="error-message"><%= request.getAttribute("errorMessage") %></div>
++  <% } %>
++
++  <form action="${pageContext.request.contextPath}/admin/payments" method="post">
++    <input type="hidden" name="action" value="recordPayment">
++
++    <div class="form-group">
++      <label for="userId">User:</label>
++      <select id="userId" name="userId" required>
++        <option value="">Select User</option>
++        <%
++          List<User> users = (List<User>) request.getAttribute("users");
++          if (users != null) {
++            for (User user : users) {
++        %>
++        <option value="<%= user.getId() %>"><%= user.getName() %></option>
++        <%
++            }
++          }
++        %>
++      </select>
++    </div>
++
++    <div class="form-group">
++      <label for="packageId">Package:</label>
++      <select id="packageId" name="packageId" required>
++        <option value="">Select Package</option>
++        <%
++          List<Package> packages = (List<Package>) request.getAttribute("packages");
++          if (packages != null) {
++            for (Package pkg : packages) {
++        %>
++        <option value="<%= pkg.getId() %>"><%= pkg.getName() %> (<%= pkg.getPrice() %>)</option>
++        <%
++            }
++          }
++        %>
++      </select>
++    </div>
++
++    <div class="form-group">
++      <label for="paymentDate">Payment Date:</label>
++      <% SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); %>
++      <input type="text" id="paymentDate" name="paymentDate" value="<%= sdf.format(new Date()) %>" required>
++      <small>Format: yyyy-MM-dd HH:mm:ss</small>
++    </div>
++
++    <div class="form-group">
++      <label for="amount">Amount Paid:</label>
++      <input type="number" id="amount" name="amount" step="0.01" required>
++    </div>
++
++    <div class="form-group">
++      <label for="paymentType">Payment Type:</label>
++      <input type="text" id="paymentType" name="paymentType">
++    </div>
++
++    <div class="form-group">
++      <label for="recurring">Recurring Payment:</label>
++      <input type="checkbox" id="recurring" name="recurring" value="true"> Yes
++    </div>
++
++    <div class="button-container">
++      <button type="submit">Record Payment</button>
++      <a href="${pageContext.request.contextPath}/admin/payments" class="back-button">Back to Payments</a>
++    </div>
++  </form>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/webapp/admin/view_payments.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/view_payments.jsp b/src/main/webapp/admin/view_payments.jsp
+new file mode 100644
+--- /dev/null	(date 1745563105299)
++++ b/src/main/webapp/admin/view_payments.jsp	(date 1745563105299)
+@@ -0,0 +1,137 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="com.example.gymproject.model.Payment" %>
++<%@ page import="java.text.SimpleDateFormat" %>
++<%@ page import="java.text.NumberFormat" %>
++<%@ page import="java.util.Locale" %>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>View Payment Details</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 20px;
++    }
++
++    .container {
++      max-width: 600px;
++      margin: 0 auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .payment-details {
++      margin-top: 20px;
++      padding: 15px;
++      border: 1px solid #ddd;
++      border-radius: 4px;
++      background-color: #f9f9f9;
++    }
++
++    .detail-item {
++      margin-bottom: 10px;
++    }
++
++    .detail-label {
++      font-weight: bold;
++      color: #555;
++      display: block;
++      margin-bottom: 5px;
++    }
++
++    .detail-value {
++      color: #333;
++    }
++
++    .button-container {
++      margin-top: 20px;
++      text-align: center;
++    }
++
++    .back-button {
++      display: inline-block;
++      padding: 10px 15px;
++      text-decoration: none;
++      background-color: #007bff;
++      color: white;
++      border-radius: 4px;
++      transition: background-color 0.3s ease;
++    }
++
++    .back-button:hover {
++      background-color: #0056b3;
++    }
++
++    .error-message {
++      color: red;
++      margin-top: 10px;
++      text-align: center;
++    }
++  </style>
++</head>
++<body>
++<div class="container">
++  <h1>Payment Details</h1>
++
++  <%
++    Payment payment = (Payment) request.getAttribute("payment");
++    if (payment == null) {
++  %>
++  <p class="error-message">Payment not found.</p>
++  <%
++  } else {
++    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
++    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault());
++  %>
++  <div class="payment-details">
++    <div class="detail-item">
++      <span class="detail-label">Payment ID:</span>
++      <span class="detail-value"><%= payment.getId() %></span>
++    </div>
++    <div class="detail-item">
++      <span class="detail-label">User:</span>
++      <span class="detail-value"><%= payment.getUser().getName() %> (ID: <%= payment.getUserId() %>)</span>
++    </div>
++    <div class="detail-item">
++      <span class="detail-label">Package:</span>
++      <span class="detail-value"><%= payment.getPackage().getName() %> (ID: <%= payment.getPackageId() %>)</span>
++    </div>
++    <div class="detail-item">
++      <span class="detail-label">Payment Date:</span>
++      <span class="detail-value"><%= dateFormat.format(payment.getPaymentDate()) %></span>
++    </div>
++    <div class="detail-item">
++      <span class="detail-label">Amount Paid:</span>
++      <span class="detail-value"><%= currencyFormat.format(payment.getAmount()) %></span>
++    </div>
++    <div class="detail-item">
++      <span class="detail-label">Payment Type:</span>
++      <span class="detail-value"><%= payment.getPaymentType() %></span>
++    </div>
++    <div class="detail-item">
++      <span class="detail-label">Recurring Payment:</span>
++      <span class="detail-value"><%= payment.isRecurring() ? "Yes" : "No" %></span>
++    </div>
++  </div>
++  <%
++    }
++  %>
++
++  <div class="button-container">
++    <a href="${pageContext.request.contextPath}/admin/payments" class="back-button">Back to Payments</a>
++  </div>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/controller/AttendanceServlet.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/controller/AttendanceServlet.java b/src/main/java/com/example/gymproject/controller/AttendanceServlet.java
+new file mode 100644
+--- /dev/null	(date 1745528066570)
++++ b/src/main/java/com/example/gymproject/controller/AttendanceServlet.java	(date 1745528066570)
+@@ -0,0 +1,165 @@
++package com.example.gymproject.controller;
++
++import com.example.gymproject.model.Attendance;
++import com.example.gymproject.model.User;
++import com.example.gymproject.util.DatabaseConnection;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.annotation.WebServlet;
++import jakarta.servlet.http.HttpServlet;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import java.io.IOException;
++import java.sql.Connection;
++import java.sql.Date;
++import java.sql.PreparedStatement;
++import java.sql.ResultSet;
++import java.sql.SQLException;
++import java.sql.Timestamp;
++import java.util.ArrayList;
++import java.util.List;
++
++@WebServlet("/admin/attendance")
++public class AttendanceServlet extends HttpServlet {
++
++    private static final long serialVersionUID = 1L;
++
++    protected void doGet(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++        if ("mark".equals(action)) {
++            List<User> users = getAllUsers();
++            request.setAttribute("users", users);
++            request.getRequestDispatcher("/admin/mark_attendance.jsp").forward(request, response);
++        } else if ("view".equals(action)) {
++            List<Attendance> attendanceRecords = getAllAttendance();
++            request.setAttribute("attendanceRecords", attendanceRecords);
++            request.getRequestDispatcher("/admin/view_attendance.jsp").forward(request, response);
++        } else {
++            response.sendRedirect(request.getContextPath() + "/admin/attendance?action=view"); // Default to viewing attendance
++        }
++    }
++
++    protected void doPost(HttpServletRequest request, HttpServletResponse response)
++            throws ServletException, IOException {
++        String action = request.getParameter("action");
++
++        if ("checkIn".equals(action)) {
++            int userId = Integer.parseInt(request.getParameter("userId"));
++            Date attendanceDate = new Date(System.currentTimeMillis()); // Today's date
++            Timestamp checkInTime = new Timestamp(System.currentTimeMillis());
++
++            Attendance attendance = new Attendance(0, userId, attendanceDate, checkInTime, null);
++            markCheckIn(attendance);
++            response.sendRedirect(request.getContextPath() + "/admin/attendance?action=view");
++
++        } else if ("checkOut".equals(action)) {
++            int attendanceId = Integer.parseInt(request.getParameter("attendanceId"));
++            Timestamp checkOutTime = new Timestamp(System.currentTimeMillis());
++            markCheckOut(attendanceId, checkOutTime);
++            response.sendRedirect(request.getContextPath() + "/admin/attendance?action=view");
++        }
++    }
++
++    private void markCheckIn(Attendance attendance) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "INSERT INTO attendance (user_id, attendance_date, check_in_time) VALUES (?, ?, ?)";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setInt(1, attendance.getUserId());
++            preparedStatement.setDate(2, attendance.getAttendanceDate());
++            preparedStatement.setTimestamp(3, attendance.getCheckInTime());
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private void markCheckOut(int attendanceId, Timestamp checkOutTime) {
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "UPDATE attendance SET check_out_time = ? WHERE id = ?";
++            preparedStatement = connection.prepareStatement(sql);
++            preparedStatement.setTimestamp(1, checkOutTime);
++            preparedStatement.setInt(2, attendanceId);
++            preparedStatement.executeUpdate();
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++    }
++
++    private List<Attendance> getAllAttendance() {
++        List<Attendance> attendanceRecords = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT a.*, u.name AS user_name FROM attendance a JOIN users u ON a.user_id = u.id ORDER BY a.attendance_date DESC, a.check_in_time DESC";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                Attendance attendance = new Attendance();
++                attendance.setId(resultSet.getInt("id"));
++                attendance.setUserId(resultSet.getInt("user_id"));
++                attendance.setAttendanceDate(resultSet.getDate("attendance_date"));
++                attendance.setCheckInTime(resultSet.getTimestamp("check_in_time"));
++                attendance.setCheckOutTime(resultSet.getTimestamp("check_out_time"));
++
++                User user = new User();
++                user.setName(resultSet.getString("user_name"));
++                attendance.setUser(user);
++
++                attendanceRecords.add(attendance);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return attendanceRecords;
++    }
++
++    private List<User> getAllUsers() {
++        List<User> users = new ArrayList<>();
++        Connection connection = null;
++        PreparedStatement preparedStatement = null;
++        ResultSet resultSet = null;
++
++        try {
++            connection = DatabaseConnection.getConnection();
++            String sql = "SELECT id, name FROM users ORDER BY name";
++            preparedStatement = connection.prepareStatement(sql);
++            resultSet = preparedStatement.executeQuery();
++
++            while (resultSet.next()) {
++                User user = new User();
++                user.setId(resultSet.getInt("id"));
++                user.setName(resultSet.getString("name"));
++                users.add(user);
++            }
++        } catch (SQLException e) {
++            e.printStackTrace();
++        } finally {
++            DatabaseConnection.close(resultSet);
++            DatabaseConnection.close(preparedStatement);
++            DatabaseConnection.close(connection);
++        }
++        return users;
++    }
++}
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>com.example</groupId>\r\n    <artifactId>gymProject</artifactId>\r\n    <version>1.0-SNAPSHOT</version>\r\n    <name>gymProject</name>\r\n    <packaging>war</packaging>\r\n\r\n    <properties>\r\n        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\r\n        <maven.compiler.target>1.8</maven.compiler.target>\r\n        <maven.compiler.source>1.8</maven.compiler.source>\r\n        <junit.version>5.8.2</junit.version>\r\n    </properties>\r\n\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>jakarta.servlet</groupId>\r\n            <artifactId>jakarta.servlet-api</artifactId>\r\n            <version>5.0.0</version>\r\n            <scope>provided</scope>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.junit.jupiter</groupId>\r\n            <artifactId>junit-jupiter-api</artifactId>\r\n            <version>${junit.version}</version>\r\n            <scope>test</scope>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.junit.jupiter</groupId>\r\n            <artifactId>junit-jupiter-engine</artifactId>\r\n            <version>${junit.version}</version>\r\n            <scope>test</scope>\r\n        </dependency>\r\n    </dependencies>\r\n\r\n    <build>\r\n        <plugins>\r\n            <plugin>\r\n                <groupId>org.apache.maven.plugins</groupId>\r\n                <artifactId>maven-war-plugin</artifactId>\r\n                <version>3.3.2</version>\r\n            </plugin>\r\n        </plugins>\r\n    </build>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision fb51595cadccb195e600a27fe3e75c705ccaa6be)
++++ b/pom.xml	(date 1745583640526)
+@@ -36,6 +36,11 @@
+             <version>${junit.version}</version>
+             <scope>test</scope>
+         </dependency>
++        <dependency>
++            <groupId>mysql</groupId>
++            <artifactId>mysql-connector-java</artifactId>
++            <version>8.0.33</version>
++        </dependency>
+     </dependencies>
+ 
+     <build>
+Index: src/main/java/com/example/gymproject/model/Payment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/model/Payment.java b/src/main/java/com/example/gymproject/model/Payment.java
+new file mode 100644
+--- /dev/null	(date 1745528527525)
++++ b/src/main/java/com/example/gymproject/model/Payment.java	(date 1745528527525)
+@@ -0,0 +1,130 @@
++package com.example.gymproject.model;
++
++import java.sql.Timestamp;
++
++public class Payment {
++    private int id;
++    private int userId;
++    private int packageId;
++    private Timestamp paymentDate;
++    private double amount;
++    private String paymentType;
++    private boolean recurring;
++
++    // Optional: To hold related User and Package objects for easier access
++    private User user;
++    private Package gymPackage;
++
++    // Default constructor
++    public Payment() {
++    }
++
++    // Constructor with all fields (excluding related objects)
++    public Payment(int id, int userId, int packageId, Timestamp paymentDate, double amount, String paymentType, boolean recurring) {
++        this.id = id;
++        this.userId = userId;
++        this.packageId = packageId;
++        this.paymentDate = paymentDate;
++        this.amount = amount;
++        this.paymentType = paymentType;
++        this.recurring = recurring;
++    }
++
++    // Constructor without ID (for recording new payments)
++    public Payment(int userId, int packageId, Timestamp paymentDate, double amount, String paymentType, boolean recurring) {
++        this.userId = userId;
++        this.packageId = packageId;
++        this.paymentDate = paymentDate;
++        this.amount = amount;
++        this.paymentType = paymentType;
++        this.recurring = recurring;
++    }
++
++    // Getters and Setters
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public int getUserId() {
++        return userId;
++    }
++
++    public void setUserId(int userId) {
++        this.userId = userId;
++    }
++
++    public int getPackageId() {
++        return packageId;
++    }
++
++    public void setPackageId(int packageId) {
++        this.packageId = packageId;
++    }
++
++    public Timestamp getPaymentDate() {
++        return paymentDate;
++    }
++
++    public void setPaymentDate(Timestamp paymentDate) {
++        this.paymentDate = paymentDate;
++    }
++
++    public double getAmount() {
++        return amount;
++    }
++
++    public void setAmount(double amount) {
++        this.amount = amount;
++    }
++
++    public String getPaymentType() {
++        return paymentType;
++    }
++
++    public void setPaymentType(String paymentType) {
++        this.paymentType = paymentType;
++    }
++
++    public boolean isRecurring() {
++        return recurring;
++    }
++
++    public void setRecurring(boolean recurring) {
++        this.recurring = recurring;
++    }
++
++    public User getUser() {
++        return user;
++    }
++
++    public void setUser(User user) {
++        this.user = user;
++    }
++
++    public Package getPackage() {
++        return gymPackage;
++    }
++
++    public void setPackage(Package gymPackage) {
++        this.gymPackage = gymPackage;
++    }
++
++    @Override
++    public String toString() {
++        return "Payment{" +
++                "id=" + id +
++                ", userId=" + userId +
++                ", packageId=" + packageId +
++                ", paymentDate=" + paymentDate +
++                ", amount=" + amount +
++                ", paymentType='" + paymentType + '\'' +
++                ", recurring=" + recurring +
++                ", user=" + (user != null ? user.getName() : null) +
++                ", gymPackage=" + (gymPackage != null ? gymPackage.getName() : null) +
++                '}';
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/model/Attendance.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/model/Attendance.java b/src/main/java/com/example/gymproject/model/Attendance.java
+new file mode 100644
+--- /dev/null	(date 1745528645230)
++++ b/src/main/java/com/example/gymproject/model/Attendance.java	(date 1745528645230)
+@@ -0,0 +1,97 @@
++package com.example.gymproject.model;
++
++import java.sql.Date;
++import java.sql.Timestamp;
++
++public class Attendance {
++    private int id;
++    private int userId;
++    private Date attendanceDate;
++    private Timestamp checkInTime;
++    private Timestamp checkOutTime;
++
++    // Optional: To hold the related User object for easier access
++    private User user;
++
++    // Default constructor
++    public Attendance() {
++    }
++
++    // Constructor with all fields
++    public Attendance(int id, int userId, Date attendanceDate, Timestamp checkInTime, Timestamp checkOutTime) {
++        this.id = id;
++        this.userId = userId;
++        this.attendanceDate = attendanceDate;
++        this.checkInTime = checkInTime;
++        this.checkOutTime = checkOutTime;
++    }
++
++    // Constructor without ID (for new check-ins)
++    public Attendance(int userId, Date attendanceDate, Timestamp checkInTime, Timestamp checkOutTime) {
++        this.userId = userId;
++        this.attendanceDate = attendanceDate;
++        this.checkInTime = checkInTime;
++        this.checkOutTime = checkOutTime;
++    }
++
++    // Getters and Setters
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public int getUserId() {
++        return userId;
++    }
++
++    public void setUserId(int userId) {
++        this.userId = userId;
++    }
++
++    public Date getAttendanceDate() {
++        return attendanceDate;
++    }
++
++    public void setAttendanceDate(Date attendanceDate) {
++        this.attendanceDate = attendanceDate;
++    }
++
++    public Timestamp getCheckInTime() {
++        return checkInTime;
++    }
++
++    public void setCheckInTime(Timestamp checkInTime) {
++        this.checkInTime = checkInTime;
++    }
++
++    public Timestamp getCheckOutTime() {
++        return checkOutTime;
++    }
++
++    public void setCheckOutTime(Timestamp checkOutTime) {
++        this.checkOutTime = checkOutTime;
++    }
++
++    public User getUser() {
++        return user;
++    }
++
++    public void setUser(User user) {
++        this.user = user;
++    }
++
++    @Override
++    public String toString() {
++        return "Attendance{" +
++                "id=" + id +
++                ", userId=" + userId +
++                ", attendanceDate=" + attendanceDate +
++                ", checkInTime=" + checkInTime +
++                ", checkOutTime=" + checkOutTime +
++                ", user=" + (user != null ? user.getName() : null) +
++                '}';
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/model/Package.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/model/Package.java b/src/main/java/com/example/gymproject/model/Package.java
+new file mode 100644
+--- /dev/null	(date 1745528373452)
++++ b/src/main/java/com/example/gymproject/model/Package.java	(date 1745528373452)
+@@ -0,0 +1,82 @@
++package com.example.gymproject.model;
++
++public class Package {
++    private int id;
++    private String name;
++    private String description;
++    private double price;
++    private int durationDays;
++
++    // Default constructor
++    public Package() {
++    }
++
++    // Constructor with all fields
++    public Package(int id, String name, String description, double price, int durationDays) {
++        this.id = id;
++        this.name = name;
++        this.description = description;
++        this.price = price;
++        this.durationDays = durationDays;
++    }
++
++    // Constructor without ID (for adding new packages)
++    public Package(String name, String description, double price, int durationDays) {
++        this.name = name;
++        this.description = description;
++        this.price = price;
++        this.durationDays = durationDays;
++    }
++
++    // Getters and Setters
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public String getDescription() {
++        return description;
++    }
++
++    public void setDescription(String description) {
++        this.description = description;
++    }
++
++    public double getPrice() {
++        return price;
++    }
++
++    public void setPrice(double price) {
++        this.price = price;
++    }
++
++    public int getDurationDays() {
++        return durationDays;
++    }
++
++    public void setDurationDays(int durationDays) {
++        this.durationDays = durationDays;
++    }
++
++    @Override
++    public String toString() {
++        return "Package{" +
++                "id=" + id +
++                ", name='" + name + '\'' +
++                ", description='" + description + '\'' +
++                ", price=" + price +
++                ", durationDays=" + durationDays +
++                '}';
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/model/Trainer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/model/Trainer.java b/src/main/java/com/example/gymproject/model/Trainer.java
+new file mode 100644
+--- /dev/null	(date 1745528473052)
++++ b/src/main/java/com/example/gymproject/model/Trainer.java	(date 1745528473052)
+@@ -0,0 +1,58 @@
++package com.example.gymproject.model;
++
++public class Trainer {
++    private int id;
++    private String name;
++    private String specialization;
++
++    // Default constructor
++    public Trainer() {
++    }
++
++    // Constructor with all fields
++    public Trainer(int id, String name, String specialization) {
++        this.id = id;
++        this.name = name;
++        this.specialization = specialization;
++    }
++
++    // Constructor without ID (for adding new trainers)
++    public Trainer(String name, String specialization) {
++        this.name = name;
++        this.specialization = specialization;
++    }
++
++    // Getters and Setters
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public String getSpecialization() {
++        return specialization;
++    }
++
++    public void setSpecialization(String specialization) {
++        this.specialization = specialization;
++    }
++
++    @Override
++    public String toString() {
++        return "Trainer{" +
++                "id=" + id +
++                ", name='" + name + '\'' +
++                ", specialization='" + specialization + '\'' +
++                '}';
++    }
++}
+\ No newline at end of file
+Index: src/main/webapp/admin/login.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/login.jsp b/src/main/webapp/admin/login.jsp
+new file mode 100644
+--- /dev/null	(date 1745587519668)
++++ b/src/main/webapp/admin/login.jsp	(date 1745587519668)
+@@ -0,0 +1,72 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Admin Login - Gym Management System</title>
++  <link rel="stylesheet" href="../css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background: #e6f0ff;
++      display: flex;
++      align-items: center;
++      justify-content: center;
++      height: 100vh;
++    }
++    .login-container {
++      background: white;
++      padding: 30px 40px;
++      border-radius: 10px;
++      box-shadow: 0 0 15px rgba(0,0,0,0.2);
++      width: 350px;
++    }
++    h2 {
++      text-align: center;
++      color: #333;
++    }
++    input[type="text"], input[type="password"] {
++      width: 100%;
++      padding: 10px 15px;
++      margin: 10px 0;
++      border: 1px solid #ccc;
++      border-radius: 6px;
++    }
++    input[type="submit"] {
++      width: 100%;
++      background-color: #007BFF;
++      color: white;
++      padding: 10px;
++      border: none;
++      border-radius: 6px;
++      font-weight: bold;
++      cursor: pointer;
++    }
++    input[type="submit"]:hover {
++      background-color: #0056b3;
++    }
++    .error {
++      color: red;
++      text-align: center;
++      margin-top: 10px;
++    }
++  </style>
++</head>
++<body>
++<div class="login-container">
++  <h2>Admin Login</h2>
++  <form action="../AdminLoginServlet" method="post">
++    <input type="text" name="username" placeholder="Enter username" required>
++    <input type="password" name="password" placeholder="Enter password" required>
++    <input type="submit" value="Login">
++  </form>
++  <%
++    String error = request.getParameter("error");
++    if ("invalid".equals(error)) {
++  %>
++  <div class="error">Invalid username or password.</div>
++  <% } %>
++
++</div>
++</body>
++</html>
+Index: src/main/webapp/admin/manage_shifts.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/manage_shifts.jsp b/src/main/webapp/admin/manage_shifts.jsp
+new file mode 100644
+--- /dev/null	(date 1745586660256)
++++ b/src/main/webapp/admin/manage_shifts.jsp	(date 1745586660256)
+@@ -0,0 +1,178 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="java.util.List" %>
++<%@ page import="com.example.gymproject.model.Shift" %>
++<%@ page import="java.sql.Time" %>
++<%@ page import="java.text.SimpleDateFormat" %>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Manage Shifts</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body
++    {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 20px;
++    }
++
++    .container {
++      max-width: 960px;
++      margin: 0 auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .add-button-container {
++      text-align: right;
++      margin-bottom: 15px;
++    }
++
++    .add-button {
++      background-color: #28a745;
++      color: white;
++      padding: 10px 15px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      text-decoration: none;
++      font-size: 16px;
++      transition: background-color 0.3s ease;
++    }
++
++    .add-button:hover {
++      background-color: #1e7e34;
++    }
++
++    table {
++      width: 100%;
++      border-collapse: collapse;
++      margin-top: 15px;
++    }
++
++    th, td {
++      padding: 10px;
++      border-bottom: 1px solid #ddd;
++      text-align: left;
++    }
++
++    th {
++      background-color: #f2f2f2;
++      font-weight: bold;
++    }
++
++    tr:hover {
++      background-color: #f9f9f9;
++    }
++
++    .action-buttons a, .action-buttons form {
++      display: inline-block;
++      margin-right: 5px;
++    }
++
++    .edit-button {
++      background-color: #007bff;
++      color: white;
++      padding: 8px 12px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      text-decoration: none;
++      font-size: 14px;
++      transition: background-color 0.3s ease;
++    }
++
++    .edit-button:hover {
++      background-color: #0056b3;
++    }
++
++    .delete-button {
++      background-color: #dc3545;
++      color: white;
++      padding: 8px 12px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      text-decoration: none;
++      font-size: 14px;
++      transition: background-color 0.3s ease;
++    }
++
++    .delete-button:hover {
++      background-color: #c82333;
++    }
++
++    .delete-form {
++      margin: 0;
++      padding: 0;
++    }
++  </style>
++</head>
++<body>
++<div class="container">
++  <h1>Manage Shifts</h1>
++
++  <div class="add-button-container">
++    <a href="${pageContext.request.contextPath}/admin/add_shift.jsp" class="add-button">Add New Shift</a>
++  </div>
++
++  <%
++    List<Shift> shifts = (List<Shift>) request.getAttribute("shifts");
++    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
++    if (shifts != null && !shifts.isEmpty()) {
++  %>
++  <table>
++    <thead>
++    <tr>
++      <th>ID</th>
++      <th>Name</th>
++      <th>Start Time</th>
++      <th>End Time</th>
++      <th>Day of Week</th>
++      <th>Actions</th>
++    </tr>
++    </thead>
++    <tbody>
++    <% for (Shift shift : shifts) { %>
++    <tr>
++      <td><%= shift.getId() %></td>
++      <td><%= shift.getName() %></td>
++      <td><%= timeFormat.format(shift.getStartTime()) %></td>
++      <td><%= timeFormat.format(shift.getEndTime()) %></td>
++      <td><%= shift.getDayOfWeek() %></td>
++      <td class="action-buttons">
++        <a href="${pageContext.request.contextPath}/admin/shifts?action=edit&id=<%= shift.getId() %>" class="edit-button">Edit</a>
++        <form action="${pageContext.request.contextPath}/admin/shifts" method="post" class="delete-form">
++          <input type="hidden" name="action" value="delete">
++          <input type="hidden" name="id" value="<%= shift.getId() %>">
++          <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this shift?')">Delete</button>
++        </form>
++      </td>
++    </tr>
++    <% } %>
++    </tbody>
++  </table>
++  <%
++  } else {
++  %>
++  <p>No shifts available.</p>
++  <%
++    }
++  %>
++
++  <div style="margin-top: 20px;">
++    <a href="${pageContext.request.contextPath}/admin/dashboard">Back to Dashboard</a>
++  </div>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/model/Shift.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/model/Shift.java b/src/main/java/com/example/gymproject/model/Shift.java
+new file mode 100644
+--- /dev/null	(date 1745531879448)
++++ b/src/main/java/com/example/gymproject/model/Shift.java	(date 1745531879448)
+@@ -0,0 +1,84 @@
++package com.example.gymproject.model;
++
++import java.sql.Time;
++
++public class Shift {
++    private int id;
++    private String name;
++    private Time startTime;
++    private Time endTime;
++    private String dayOfWeek;
++
++    // Default constructor
++    public Shift() {
++    }
++
++    // Constructor with all fields
++    public Shift(int id, String name, Time startTime, Time endTime, String dayOfWeek) {
++        this.id = id;
++        this.name = name;
++        this.startTime = startTime;
++        this.endTime = endTime;
++        this.dayOfWeek = dayOfWeek;
++    }
++
++    // Constructor without ID (for adding new shifts)
++    public Shift(String name, Time startTime, Time endTime, String dayOfWeek) {
++        this.name = name;
++        this.startTime = startTime;
++        this.endTime = endTime;
++        this.dayOfWeek = dayOfWeek;
++    }
++
++    // Getters and Setters
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public Time getStartTime() {
++        return startTime;
++    }
++
++    public void setStartTime(Time startTime) {
++        this.startTime = startTime;
++    }
++
++    public Time getEndTime() {
++        return endTime;
++    }
++
++    public void setEndTime(Time endTime) {
++        this.endTime = endTime;
++    }
++
++    public String getDayOfWeek() {
++        return dayOfWeek;
++    }
++
++    public void setDayOfWeek(String dayOfWeek) {
++        this.dayOfWeek = dayOfWeek;
++    }
++
++    @Override
++    public String toString() {
++        return "Shift{" +
++                "id=" + id +
++                ", name='" + name + '\'' +
++                ", startTime=" + startTime +
++                ", endTime=" + endTime +
++                ", dayOfWeek='" + dayOfWeek + '\'' +
++                '}';
++    }
++}
+\ No newline at end of file
+Index: src/main/webapp/admin/assign_trainers_to_shifts.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/assign_trainers_to_shifts.jsp b/src/main/webapp/admin/assign_trainers_to_shifts.jsp
+new file mode 100644
+--- /dev/null	(date 1745587608994)
++++ b/src/main/webapp/admin/assign_trainers_to_shifts.jsp	(date 1745587608994)
+@@ -0,0 +1,163 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="java.util.List" %>
++<%@ page import="com.example.gymproject.model.TrainerShift" %>
++<%@ page import="com.example.gymproject.model.Trainer" %>
++<%@ page import="com.example.gymproject.model.Shift" %>
++<%@ page import="java.text.SimpleDateFormat" %>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Manage Trainer Shifts</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 20px;
++    }
++
++    .container {
++      max-width: 960px;
++      margin: 0 auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .add-button-container {
++      text-align: right;
++      margin-bottom: 15px;
++    }
++
++    .add-button {
++      background-color: #28a745;
++      color: white;
++      padding: 10px 15px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      text-decoration: none;
++      font-size: 16px;
++      transition: background-color 0.3s ease;
++    }
++
++    .add-button:hover {
++      background-color: #1e7e34;
++    }
++
++    table {
++      width: 100%;
++      border-collapse: collapse;
++      margin-top: 15px;
++    }
++
++    th, td {
++      padding: 10px;
++      border-bottom: 1px solid #ddd;
++      text-align: left;
++    }
++
++    th {
++      background-color: #f2f2f2;
++      font-weight: bold;
++    }
++
++    tr:hover {
++      background-color: #f9f9f9;
++    }
++
++    .action-buttons form {
++      display: inline-block;
++      margin-right: 5px;
++    }
++
++    .delete-button {
++      background-color: #dc3545;
++      color: white;
++      padding: 8px 12px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      text-decoration: none;
++      font-size: 14px;
++      transition: background-color 0.3s ease;
++    }
++
++    .delete-button:hover {
++      background-color: #c82333;
++    }
++
++    .delete-form {
++      margin: 0;
++      padding: 0;
++    }
++  </style>
++</head>
++<body>
++<div class="container">
++  <h1>Manage Trainer Shifts</h1>
++
++  <div class="add-button-container">
++    <a href="${pageContext.request.contextPath}/admin/add_trainer_shift.jsp" class="add-button">Assign Trainer to Shift</a>
++  </div>
++
++  <%
++    List<TrainerShift> trainerShifts = (List<TrainerShift>) request.getAttribute("trainerShifts");
++    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
++    if (trainerShifts != null && !trainerShifts.isEmpty()) {
++  %>
++  <table>
++    <thead>
++    <tr>
++      <th>ID</th>
++      <th>Trainer</th>
++      <th>Shift</th>
++      <th>Day of Week</th>
++      <th>Start Time</th>
++      <th>End Time</th>
++      <th>Actions</th>
++    </tr>
++    </thead>
++    <tbody>
++    <% for (TrainerShift ts : trainerShifts) { %>
++    <tr>
++      <td><%= ts.getId() %></td>
++      <td><%= ts.getTrainer().getName() %></td>
++      <td><%= ts.getShift().getName() %></td>
++      <td><%= ts.getShift().getDayOfWeek() %></td>
++      <td><%= timeFormat.format(ts.getShift().getStartTime()) %></td>
++      <td><%= timeFormat.format(ts.getShift().getEndTime()) %></td>
++      <td class="action-buttons">
++        <form action="${pageContext.request.contextPath}/admin/trainer_shifts" method="post" class="delete-form">
++          <input type="hidden" name="action" value="delete">
++          <input type="hidden" name="id" value="<%= ts.getId() %>">
++          <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to remove this trainer from this shift?')">Remove</button>
++        </form>
++      </td>
++    </tr>
++    <% } %>
++    </tbody>
++  </table>
++  <%
++  } else {
++  %>
++  <p>No trainers are currently assigned to shifts.</p>
++  <%
++    }
++  %>
++
++  <div style="margin-top: 20px;">
++    <a href="${pageContext.request.contextPath}/admin/dashboard">Back to Dashboard</a>
++  </div>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/java/com/example/gymproject/model/TrainerShift.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/example/gymproject/model/TrainerShift.java b/src/main/java/com/example/gymproject/model/TrainerShift.java
+new file mode 100644
+--- /dev/null	(date 1745587964793)
++++ b/src/main/java/com/example/gymproject/model/TrainerShift.java	(date 1745587964793)
+@@ -0,0 +1,90 @@
++package com.example.gymproject.model;
++
++import java.text.SimpleDateFormat;
++
++public class TrainerShift {
++    private int id;
++    private int trainerId;
++    private int shiftId;
++    private Trainer trainer;
++    private Shift shift;
++
++    // Default constructor
++    public TrainerShift() {
++    }
++
++    // Constructor with IDs
++    public TrainerShift(int trainerId, int shiftId) {
++        this.trainerId = trainerId;
++        this.shiftId = shiftId;
++    }
++
++    // Constructor with associated objects
++    public TrainerShift(Trainer trainer, Shift shift) {
++        this.trainer = trainer;
++        this.shift = shift;
++        this.trainerId = trainer.getId();
++        this.shiftId = shift.getId();
++    }
++
++    // Getters and setters for all attributes
++
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public int getTrainerId() {
++        return trainerId;
++    }
++
++    public void setTrainerId(int trainerId) {
++        this.trainerId = trainerId;
++    }
++
++    public int getShiftId() {
++        return shiftId;
++    }
++
++    public void setShiftId(int shiftId) {
++        this.shiftId = shiftId;
++    }
++
++    public Trainer getTrainer() {
++        return trainer;
++    }
++
++    public void setTrainer(Trainer trainer) {
++        this.trainer = trainer;
++        if (trainer != null) {
++            this.trainerId = trainer.getId();
++        }
++    }
++
++    public Shift getShift() {
++        return shift;
++    }
++
++    public void setShift(Shift shift) {
++        this.shift = shift;
++        if (shift != null) {
++            this.shiftId = shift.getId();
++        }
++    }
++
++    @Override
++    public String toString() {
++        return "TrainerShift{" +
++                "id=" + id +
++                ", trainerId=" + trainerId +
++                ", shiftId=" + shiftId +
++                (trainer != null ? ", trainer=" + trainer.getName() : "") +
++                (shift != null ? ", shift=" + shift.getName() + " (" + shift.getDayOfWeek() + " " + new SimpleDateFormat("HH:mm").format(shift.getStartTime()) + "-" + new SimpleDateFormat("HH:mm").format(shift.getEndTime()) + ")" : "") +
++                '}';
++    }
++
++    // Optional: equals() and hashCode() methods
++}
+\ No newline at end of file
+Index: src/main/webapp/admin/add_shift.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/add_shift.jsp b/src/main/webapp/admin/add_shift.jsp
+new file mode 100644
+--- /dev/null	(date 1745586835094)
++++ b/src/main/webapp/admin/add_shift.jsp	(date 1745586835094)
+@@ -0,0 +1,145 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<!DOCTYPE html>
++<html>
++<head>
++  <meta charset="UTF-8">
++  <title>Add New Shift</title>
++  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++  <style>
++    body {
++      font-family: Arial, sans-serif;
++      background-color: #f4f4f4;
++      margin: 0;
++      padding: 20px;
++    }
++
++    .container {
++      max-width: 600px;
++      margin: 0 auto;
++      background-color: #fff;
++      padding: 20px;
++      border-radius: 8px;
++      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++    }
++
++    h1 {
++      color: #333;
++      text-align: center;
++      margin-bottom: 20px;
++    }
++
++    .form-group {
++      margin-bottom: 15px;
++    }
++
++    label {
++      display: block;
++      margin-bottom: 5px;
++      color: #555;
++      font-weight: bold;
++    }
++
++    input[type="text"],
++    input[type="time"],
++    select {
++      width: calc(100% - 12px);
++      padding: 10px;
++      border: 1px solid #ccc;
++      border-radius: 4px;
++      box-sizing: border-box;
++      font-size: 16px;
++    }
++
++    button[type="submit"] {
++      background-color: #28a745;
++      color: white;
++      padding: 12px 20px;
++      border: none;
++      border-radius: 4px;
++      cursor: pointer;
++      font-size: 16px;
++      transition: background-color 0.3s ease;
++      width: 100%;
++    }
++
++    button[type="submit"]:hover {
++      background-color: #1e7e34;
++    }
++
++    .button-container {
++      margin-top: 20px;
++      text-align: center;
++    }
++
++    .back-button {
++      display: inline-block;
++      padding: 10px 15px;
++      text-decoration: none;
++      background-color: #007bff;
++      color: white;
++      border-radius: 4px;
++      transition: background-color 0.3s ease;
++      margin-right: 10px;
++    }
++
++    .back-button:hover {
++      background-color: #0056b3;
++    }
++
++    .error-message {
++      color: red;
++      margin-top: 10px;
++      text-align: center;
++    }
++  </style>
++</head>
++<body>
++<div class="container">
++  <h1>Add New Shift</h1>
++
++  <% if (request.getAttribute("errorMessage") != null) { %>
++  <div class="error-message"><%= request.getAttribute("errorMessage") %></div>
++  <% } %>
++
++  <form action="${pageContext.request.contextPath}/admin/shifts" method="post">
++    <input type="hidden" name="action" value="add">
++
++    <div class="form-group">
++      <label for="name">Shift Name:</label>
++      <input type="text" id="name" name="name" required>
++    </div>
++
++    <div class="form-group">
++      <label for="startTime">Start Time:</label>
++      <input type="time" id="startTime" name="startTime" required>
++      <small>Format: HH:mm (24-hour)</small>
++    </div>
++
++    <div class="form-group">
++      <label for="endTime">End Time:</label>
++      <input type="time" id="endTime" name="endTime" required>
++      <small>Format: HH:mm (24-hour)</small>
++    </div>
++
++    <div class="form-group">
++      <label for="dayOfWeek">Day of Week:</label>
++      <select id="dayOfWeek" name="dayOfWeek" required>
++        <option value="">Select Day</option>
++        <option value="Monday">Monday</option>
++        <option value="Tuesday">Tuesday</option>
++        <option value="Wednesday">Wednesday</option>
++        <option value="Thursday">Thursday</option>
++        <option value="Friday">Friday</option>
++        <option value="Saturday">Saturday</option>
++        <option value="Sunday">Sunday</option>
++      </select>
++    </div>
++
++    <div class="button-container">
++      <button type="submit">Add Shift</button>
++      <a href="${pageContext.request.contextPath}/admin/shifts" class="back-button">Back to Shifts</a>
++    </div>
++  </form>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: src/main/webapp/admin/edit_shift.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/webapp/admin/edit_shift.jsp b/src/main/webapp/admin/edit_shift.jsp
+new file mode 100644
+--- /dev/null	(date 1745586936366)
++++ b/src/main/webapp/admin/edit_shift.jsp	(date 1745586936366)
+@@ -0,0 +1,164 @@
++<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
++<%@ page import="com.example.gymproject.model.Shift" %>
++<%@ page import="java.sql.Time" %>
++<%@ page import="java.text.SimpleDateFormat" %>
++<!DOCTYPE html>
++<html>
++<head>
++    <meta charset="UTF-8">
++    <title>Edit Shift</title>
++    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
++    <style>
++        body {
++            font-family: Arial, sans-serif;
++            background-color: #f4f4f4;
++            margin: 0;
++            padding: 20px;
++        }
++
++        .container {
++            max-width: 600px;
++            margin: 0 auto;
++            background-color: #fff;
++            padding: 20px;
++            border-radius: 8px;
++            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
++        }
++
++        h1 {
++            color: #333;
++            text-align: center;
++            margin-bottom: 20px;
++        }
++
++        .form-group {
++            margin-bottom: 15px;
++        }
++
++        label {
++            display: block;
++            margin-bottom: 5px;
++            color: #555;
++            font-weight: bold;
++        }
++
++        input[type="text"],
++        input[type="time"],
++        select {
++            width: calc(100% - 12px);
++            padding: 10px;
++            border: 1px solid #ccc;
++            border-radius: 4px;
++            box-sizing: border-box;
++            font-size: 16px;
++        }
++
++        button[type="submit"] {
++            background-color: #007bff;
++            color: white;
++            padding: 12px 20px;
++            border: none;
++            border-radius: 4px;
++            cursor: pointer;
++            font-size: 16px;
++            transition: background-color 0.3s ease;
++            width: 100%;
++        }
++
++        button[type="submit"]:hover {
++            background-color: #0056b3;
++        }
++
++        .button-container {
++            margin-top: 20px;
++            text-align: center;
++        }
++
++        .back-button {
++            display: inline-block;
++            padding: 10px 15px;
++            text-decoration: none;
++            background-color: #6c757d;
++            color: white;
++            border-radius: 4px;
++            transition: background-color 0.3s ease;
++            margin-right: 10px;
++        }
++
++        .back-button:hover {
++            background-color: #5a6268;
++        }
++
++        .error-message {
++            color: red;
++            margin-top: 10px;
++            text-align: center;
++        }
++    </style>
++</head>
++<body>
++<div class="container">
++    <h1>Edit Shift</h1>
++
++    <%
++        Shift shiftToEdit = (Shift) request.getAttribute("shift");
++        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
++        if (shiftToEdit == null) {
++    %>
++    <p class="error-message">Shift not found.</p>
++    <div class="button-container">
++        <a href="${pageContext.request.contextPath}/admin/shifts" class="back-button">Back to Shifts</a>
++    </div>
++    <%
++    } else {
++    %>
++    <% if (request.getAttribute("errorMessage") != null) { %>
++    <div class="error-message"><%= request.getAttribute("errorMessage") %></div>
++    <% } %>
++
++    <form action="${pageContext.request.contextPath}/admin/shifts" method="post">
++        <input type="hidden" name="action" value="update">
++        <input type="hidden" name="id" value="<%= shiftToEdit.getId() %>">
++
++        <div class="form-group">
++            <label for="name">Shift Name:</label>
++            <input type="text" id="name" name="name" value="<%= shiftToEdit.getName() %>" required>
++        </div>
++
++        <div class="form-group">
++            <label for="startTime">Start Time:</label>
++            <input type="time" id="startTime" name="startTime" value="<%= timeFormat.format(shiftToEdit.getStartTime()) %>" required>
++            <small>Format: HH:mm (24-hour)</small>
++        </div>
++
++        <div class="form-group">
++            <label for="endTime">End Time:</label>
++            <input type="time" id="endTime" name="endTime" value="<%= timeFormat.format(shiftToEdit.getEndTime()) %>" required>
++            <small>Format: HH:mm (24-hour)</small>
++        </div>
++
++        <div class="form-group">
++            <label for="dayOfWeek">Day of Week:</label>
++            <select id="dayOfWeek" name="dayOfWeek" required>
++                <option value="">Select Day</option>
++                <option value="Monday" <%= "Monday".equals(shiftToEdit.getDayOfWeek()) ? "selected" : "" %>>Monday</option>
++                <option value="Tuesday" <%= "Tuesday".equals(shiftToEdit.getDayOfWeek()) ? "selected" : "" %>>Tuesday</option>
++                <option value="Wednesday" <%= "Wednesday".equals(shiftToEdit.getDayOfWeek()) ? "selected" : "" %>>Wednesday</option>
++                <option value="Thursday" <%= "Thursday".equals(shiftToEdit.getDayOfWeek()) ? "selected" : "" %>>Thursday</option>
++                <option value="Friday" <%= "Friday".equals(shiftToEdit.getDayOfWeek()) ? "selected" : "" %>>Friday</option>
++                <option value="Saturday" <%= "Saturday".equals(shiftToEdit.getDayOfWeek()) ? "selected" : "" %>>Saturday</option>
++                <option value="Sunday" <%= "Sunday".equals(shiftToEdit.getDayOfWeek()) ? "selected" : "" %>>Sunday</option>
++            </select>
++        </div>
++
++        <div class="button-container">
++            <button type="submit">Update Shift</button>
++            <a href="${pageContext.request.contextPath}/admin/shifts" class="back-button">Back to Shifts</a>
++        </div>
++    </form>
++    <%
++        }
++    %>
++</div>
++</body>
++</html>
+\ No newline at end of file
+Index: .idea/artifacts/gymProject_war_exploded.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><component name=\"ArtifactManager\">\r\n  <artifact type=\"exploded-war\" name=\"gymProject:war exploded\">\r\n    <output-path>$PROJECT_DIR$/target/gymProject-1.0-SNAPSHOT</output-path>\r\n    <properties id=\"maven-jee-properties\">\r\n      <options>\r\n        <exploded>true</exploded>\r\n        <module>gymProject</module>\r\n        <packaging>war</packaging>\r\n      </options>\r\n    </properties>\r\n    <root id=\"root\">\r\n      <element id=\"directory\" name=\"WEB-INF\">\r\n        <element id=\"directory\" name=\"classes\">\r\n          <element id=\"module-output\" name=\"gymProject\" />\r\n        </element>\r\n      </element>\r\n      <element id=\"directory\" name=\"META-INF\">\r\n        <element id=\"file-copy\" path=\"$PROJECT_DIR$/target/gymProject-1.0-SNAPSHOT/META-INF/MANIFEST.MF\" />\r\n      </element>\r\n      <element id=\"javaee-facet-resources\" facet=\"gymProject/web/Web\" />\r\n    </root>\r\n  </artifact>\r\n</component>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/artifacts/gymProject_war_exploded.xml b/.idea/artifacts/gymProject_war_exploded.xml
+--- a/.idea/artifacts/gymProject_war_exploded.xml	(revision fb51595cadccb195e600a27fe3e75c705ccaa6be)
++++ b/.idea/artifacts/gymProject_war_exploded.xml	(date 1745583737007)
+@@ -13,6 +13,10 @@
+         <element id="directory" name="classes">
+           <element id="module-output" name="gymProject" />
+         </element>
++        <element id="directory" name="lib">
++          <element id="library" level="project" name="Maven: com.mysql:mysql-connector-j:8.0.33" />
++          <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.21.9" />
++        </element>
+       </element>
+       <element id="directory" name="META-INF">
+         <element id="file-copy" path="$PROJECT_DIR$/target/gymProject-1.0-SNAPSHOT/META-INF/MANIFEST.MF" />
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ArtifactsWorkspaceSettings\">\r\n    <artifacts-to-build>\r\n      <artifact name=\"gymProject:war exploded\" />\r\n    </artifacts-to-build>\r\n  </component>\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"55f8a36e-9560-4854-b011-0dae4ece9a65\" name=\"Changes\" comment=\"init app\">\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/dashboard.jsp\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/dashboardstyle.css\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/addidas.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/bag.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/blueBag.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/jeans.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/nike-min.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/profile.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/scarves.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/shirt.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/images/sunglasses.jpg\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/webapp/script.js\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ComposerSettings\">\r\n    <execution />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Jsp File\" />\r\n        <option value=\"HTML File\" />\r\n        <option value=\"JavaScript File\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"LogFilters\">\r\n    <option name=\"FILTER_ERRORS\" value=\"false\" />\r\n    <option name=\"FILTER_WARNINGS\" value=\"false\" />\r\n    <option name=\"FILTER_INFO\" value=\"true\" />\r\n    <option name=\"FILTER_DEBUG\" value=\"true\" />\r\n    <option name=\"CUSTOM_FILTER\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2w89LRek03tLAjKsHUPXISz8uMl\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"DefaultHtmlFileTemplate\": \"HTML File\",\r\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\r\n    \"WebServerToolWindowFactoryState\": \"false\",\r\n    \"last_opened_file_path\": \"C:/Users/Ikaneneng Makakole/IdeaProjects/gymProject\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Ikaneneng Makakole\\IdeaProjects\\gymProject\" />\r\n      <recent name=\"C:\\Users\\Ikaneneng Makakole\\IdeaProjects\\gymProject\\src\\main\\webapp\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Ikaneneng Makakole\\IdeaProjects\\gymProject\\src\\main\\webapp\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"GlassFish 7.0.14\" type=\"GlassfishConfiguration\" factoryName=\"Local\" APPLICATION_SERVER_NAME=\"GlassFish 7.0.14\" ALTERNATIVE_JRE_ENABLED=\"false\">\r\n      <option name=\"OPEN_IN_BROWSER_URL\" value=\"http://localhost:8080/gymProject-1.0-SNAPSHOT\" />\r\n      <deployment>\r\n        <artifact name=\"gymProject:war exploded\">\r\n          <settings />\r\n        </artifact>\r\n      </deployment>\r\n      <server-settings>\r\n        <option name=\"DOMAIN\" value=\"domain1\" />\r\n        <option name=\"PRESERVE\" value=\"false\" />\r\n        <option name=\"COMPATIBILITY\" value=\"false\" />\r\n        <option name=\"VIRTUAL_SERVER\" />\r\n        <option name=\"USERNAME\" value=\"admin\" />\r\n        <option name=\"CREDENTIAL_ALIAS\" />\r\n      </server-settings>\r\n      <predefined_log_file enabled=\"true\" id=\"GlassFish\" />\r\n      <RunnerSettings RunnerId=\"Debug\">\r\n        <option name=\"DEBUG_PORT\" value=\"9009\" />\r\n      </RunnerSettings>\r\n      <ConfigurationWrapper VM_VAR=\"JAVA_OPTS\" RunnerId=\"Run\">\r\n        <option name=\"USE_ENV_VARIABLES\" value=\"true\" />\r\n        <STARTUP>\r\n          <option name=\"USE_DEFAULT\" value=\"true\" />\r\n          <option name=\"SCRIPT\" value=\"\" />\r\n          <option name=\"VM_PARAMETERS\" value=\"\" />\r\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\r\n        </STARTUP>\r\n        <SHUTDOWN>\r\n          <option name=\"USE_DEFAULT\" value=\"true\" />\r\n          <option name=\"SCRIPT\" value=\"\" />\r\n          <option name=\"VM_PARAMETERS\" value=\"\" />\r\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\r\n        </SHUTDOWN>\r\n      </ConfigurationWrapper>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n        <option name=\"BuildArtifacts\" enabled=\"true\">\r\n          <artifact name=\"gymProject:war exploded\" />\r\n        </option>\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"55f8a36e-9560-4854-b011-0dae4ece9a65\" name=\"Changes\" comment=\"\" />\r\n      <created>1745412286830</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1745412286830</updated>\r\n      <workItem from=\"1745412288024\" duration=\"3760000\" />\r\n      <workItem from=\"1745463788337\" duration=\"1505000\" />\r\n      <workItem from=\"1745483560916\" duration=\"9517000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"init app\">\r\n      <created>1745413426664</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1745413426665</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"init app\">\r\n      <created>1745491324278</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1745491324278</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"init app\">\r\n      <created>1745495640373</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1745495640373</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"4\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"init app\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"init app\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision fb51595cadccb195e600a27fe3e75c705ccaa6be)
++++ b/.idea/workspace.xml	(date 1745921371439)
+@@ -10,19 +10,38 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="55f8a36e-9560-4854-b011-0dae4ece9a65" name="Changes" comment="init app">
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/dashboard.jsp" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/dashboardstyle.css" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/addidas.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/bag.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/blueBag.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/jeans.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/nike-min.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/profile.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/scarves.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/shirt.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/sunglasses.jpg" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/webapp/script.js" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/AdminLoginServlet.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/AttendanceServlet.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/PackageServlet.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/PaymentServlet.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/ShiftServlet.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/TrainerServlet.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/UserServlet.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Admin.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Attendance.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Package.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Payment.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Shift.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Trainer.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/TrainerShift.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/User.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/util/DatabaseConnection.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/add_package.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/add_shift.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/assign_trainers_to_shifts.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/dashboard.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/edit_package.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/edit_shift.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/login.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/manage_packages.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/manage_payments.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/manage_shifts.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/record_payment.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/reports.jsp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/view_payments.jsp" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/artifacts/gymProject_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/gymProject_war_exploded.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -35,9 +54,10 @@
+   <component name="FileTemplateManagerImpl">
+     <option name="RECENT_TEMPLATES">
+       <list>
+-        <option value="Jsp File" />
+         <option value="HTML File" />
+         <option value="JavaScript File" />
++        <option value="Jsp File" />
++        <option value="Class" />
+       </list>
+     </option>
+   </component>
+@@ -53,6 +73,9 @@
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
++  </component>
++  <component name="ProblemsViewState">
++    <option name="selectedTabId" value="CurrentFile" />
+   </component>
+   <component name="ProjectId" id="2w89LRek03tLAjKsHUPXISz8uMl" />
+   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+@@ -60,16 +83,16 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "DefaultHtmlFileTemplate": "HTML File",
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "WebServerToolWindowFactoryState": "false",
+-    "last_opened_file_path": "C:/Users/Ikaneneng Makakole/IdeaProjects/gymProject"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
++    &quot;last_opened_file_path&quot;: &quot;C:/Users/Ikaneneng Makakole/IdeaProjects/gymProject&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="C:\Users\Ikaneneng Makakole\IdeaProjects\gymProject" />
+@@ -79,7 +102,20 @@
+       <recent name="C:\Users\Ikaneneng Makakole\IdeaProjects\gymProject\src\main\webapp" />
+     </key>
+   </component>
+-  <component name="RunManager">
++  <component name="RunManager" selected="GlassFish Server.GlassFish 7.0.14">
++    <configuration name="DatabaseConnection" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
++      <option name="MAIN_CLASS_NAME" value="com.example.gymproject.util.DatabaseConnection" />
++      <module name="gymProject" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="com.example.gymproject.util.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
+     <configuration name="GlassFish 7.0.14" type="GlassfishConfiguration" factoryName="Local" APPLICATION_SERVER_NAME="GlassFish 7.0.14" ALTERNATIVE_JRE_ENABLED="false">
+       <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8080/gymProject-1.0-SNAPSHOT" />
+       <deployment>
+@@ -121,6 +157,11 @@
+         </option>
+       </method>
+     </configuration>
++    <recent_temporary>
++      <list>
++        <item itemvalue="Application.DatabaseConnection" />
++      </list>
++    </recent_temporary>
+   </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+@@ -132,7 +173,11 @@
+       <updated>1745412286830</updated>
+       <workItem from="1745412288024" duration="3760000" />
+       <workItem from="1745463788337" duration="1505000" />
+-      <workItem from="1745483560916" duration="9517000" />
++      <workItem from="1745483560916" duration="24437000" />
++      <workItem from="1745578938600" duration="10192000" />
++      <workItem from="1745848188684" duration="1316000" />
++      <workItem from="1745849943382" duration="832000" />
++      <workItem from="1745920521655" duration="728000" />
+     </task>
+     <task id="LOCAL-00001" summary="init app">
+       <created>1745413426664</created>
+@@ -155,7 +200,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1745495640373</updated>
+     </task>
+-    <option name="localTasksCounter" value="4" />
++    <task id="LOCAL-00004" summary="init app">
++      <created>1745525464333</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1745525464333</updated>
++    </task>
++    <option name="localTasksCounter" value="5" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
