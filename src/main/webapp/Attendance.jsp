@@ -90,9 +90,9 @@
             <tbody>
                 <%
                 // Database connection parameters
-                String url = "jdbc:mysql://localhost:3306/GymManagement?useSSL=false";
+                String url = "jdbc:mysql://localhost:3306/gym_management?useSSL=false";
                 String user = "root";
-                String password = "59908114";
+                String password = "12345";
                 
                 try {
                     // Load JDBC driver

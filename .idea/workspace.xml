@@ -10,19 +10,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55f8a36e-9560-4854-b011-0dae4ece9a65" name="Changes" comment="init app">
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/dashboard.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/dashboardstyle.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/addidas.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/bag.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/blueBag.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/jeans.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/nike-min.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/profile.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/scarves.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/shirt.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/images/sunglasses.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/script.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/AdminLoginServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/AttendanceServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/PackageServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/PaymentServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/ShiftServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/TrainerServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/UserServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Admin.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Attendance.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Package.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Payment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Shift.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Trainer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/TrainerShift.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/util/DatabaseConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/add_package.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/add_shift.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/assign_trainers_to_shifts.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/dashboard.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/edit_package.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/edit_shift.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/login.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/manage_packages.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/manage_payments.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/manage_shifts.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/record_payment.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/reports.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/view_payments.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/gymProject_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/gymProject_war_exploded.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/webContexts.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webContexts.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/gymproject/CheckInServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/CheckInServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/gymproject/CheckOutServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/CheckOutServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/Attendance.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/Attendance.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/ViewTrainers.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/ViewTrainers.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/addTrainers.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/addTrainers.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,9 +60,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Jsp File" />
         <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="Jsp File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -54,22 +80,25 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectId" id="2w89LRek03tLAjKsHUPXISz8uMl" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Ikaneneng Makakole/IdeaProjects/gymProject"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Ikaneneng Makakole/IdeaProjects/gymProject&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Ikaneneng Makakole\IdeaProjects\gymProject" />
@@ -79,7 +108,20 @@
       <recent name="C:\Users\Ikaneneng Makakole\IdeaProjects\gymProject\src\main\webapp" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="GlassFish Server.GlassFish 7.0.14">
+    <configuration name="DatabaseConnection" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.gymproject.util.DatabaseConnection" />
+      <module name="gymProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.gymproject.util.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="GlassFish 7.0.14" type="GlassfishConfiguration" factoryName="Local" APPLICATION_SERVER_NAME="GlassFish 7.0.14" ALTERNATIVE_JRE_ENABLED="false">
       <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8080/gymProject-1.0-SNAPSHOT" />
       <deployment>
@@ -121,6 +163,11 @@
         </option>
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.DatabaseConnection" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -132,7 +179,12 @@
       <updated>1745412286830</updated>
       <workItem from="1745412288024" duration="3760000" />
       <workItem from="1745463788337" duration="1505000" />
-      <workItem from="1745483560916" duration="9517000" />
+      <workItem from="1745483560916" duration="24437000" />
+      <workItem from="1745578938600" duration="10192000" />
+      <workItem from="1745848188684" duration="1316000" />
+      <workItem from="1745849943382" duration="832000" />
+      <workItem from="1745920521655" duration="728000" />
+      <workItem from="1746179994975" duration="8118000" />
     </task>
     <task id="LOCAL-00001" summary="init app">
       <created>1745413426664</created>
@@ -155,7 +207,14 @@
       <option name="project" value="LOCAL" />
       <updated>1745495640373</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="init app">
+      <created>1745525464333</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1745525464333</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

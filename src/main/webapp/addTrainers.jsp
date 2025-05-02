@@ -89,9 +89,9 @@
                     <option value="">Select a training type</option>
                     <%
                     // Database connection parameters
-                    String url = "jdbc:mysql://localhost:3306/GymManagement?useSSL=false";
+                    String url = "jdbc:mysql://localhost:3306/gym_management?useSSL=false";
                     String user = "root";
-                    String password = "59908114";
+                    String password = "12345";
                     
                     try {
                         // Load JDBC driver
@@ -104,7 +104,7 @@
                         Statement stmt = conn.createStatement();
                         
                         // Execute query
-                        ResultSet rs = stmt.executeQuery("SELECT name FROM TrainingTypes");
+                        ResultSet rs = stmt.executeQuery("SELECT name FROM trainingtypes");
                         
                         // Process results
                         while(rs.next()) {

@@ -26,10 +26,11 @@
     
     .error-message {
       text-align: center;
-      padding: 30px;
+      padding: 90px;
       background: #ffebee;
       border-radius: 8px;
       margin: 20px;
+      margin-bottom: -100px;
     }
 
     /* Modified sidebar styles */
@@ -124,6 +125,30 @@
       <a href="#" onclick="loadContent('ViewTrainers.jsp')">
         <i class='bx bx-list-ul'></i>
         <span class="links_name">View Trainers</span>
+      </a>
+    </li>
+    <li>
+      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/packages')">
+        <i class='bx bx-list-ul'></i>
+        <span class="links_name">Manage Packages</span>
+      </a>
+    </li>
+    <li>
+      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/payments')">
+        <i class='bx bx-list-ul'></i>
+        <span class="links_name">Manage Payments</span>
+      </a>
+    </li>
+    <li>
+      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/shifts')">
+        <i class='bx bx-list-ul'></i>
+        <span class="links_name">Manage Shifts</span>
+      </a>
+    </li>
+    <li>
+      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/trainer_shifts')">
+        <i class='bx bx-list-ul'></i>
+        <span class="links_name">Manage Trainer Shifts</span>
       </a>
     </li>
   </ul>
