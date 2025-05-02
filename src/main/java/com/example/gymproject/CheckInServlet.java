@@ -49,11 +49,14 @@ public class CheckInServlet extends HttpServlet {
                     request.getSession().setAttribute("message", "Member checked in successfully");
                     request.getSession().setAttribute("messageType", "success");
                 } else {
+                    System.out.println("error : "  );
                     request.getSession().setAttribute("message", "No member found with phone: " + phone);
                     request.getSession().setAttribute("messageType", "error");
                 }
             }
         } catch (SQLException e) {
+            System.out.println("error : " + e.getMessage() );
+
             request.getSession().setAttribute("message", "Database error: " + e.getMessage());
             request.getSession().setAttribute("messageType", "error");
         }

@@ -11,9 +11,9 @@ import java.util.Date;
 @WebServlet("/AddTrainers")
 public class AddTrainers extends HttpServlet {
     
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/GymManagement?useSSL=false";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/gym_management?useSSL=false";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "59908114";
+    private static final String DB_PASSWORD = "12345";
 
     static {
         try {
