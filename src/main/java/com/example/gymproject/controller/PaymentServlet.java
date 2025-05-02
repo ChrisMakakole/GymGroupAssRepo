@@ -11,18 +11,45 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @WebServlet("/admin/payments")
 public class PaymentServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    private Timer autoPayTimer;
+    private boolean autoPayStarted = false;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if (!autoPayStarted) {
+            autoPayTimer = new Timer();
+            autoPayTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    processAutoPayment();
+                }
+            }, 0, 60 * 1000); // Run every 1 minute
+
+            autoPayStarted = true;
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (autoPayTimer != null) {
+            autoPayTimer.cancel();
+        }
+        super.destroy();
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,9 +58,8 @@ public class PaymentServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             Payment payment = getPaymentById(id);
             request.setAttribute("payment", payment);
-            request.getRequestDispatcher("/admin/view_payments.jsp").forward(request, response); // Assuming a view_payments.jsp for details
+            request.getRequestDispatcher("/admin/view_payments.jsp").forward(request, response);
         } else if ("record".equals(action)) {
-            // Load users and packages for the record payment form
             List<User> users = getAllUsers();
             List<Package> packages = getAllPackages();
             request.setAttribute("users", users);
@@ -55,13 +81,61 @@ public class PaymentServlet extends HttpServlet {
             int packageId = Integer.parseInt(request.getParameter("packageId"));
             double amount = Double.parseDouble(request.getParameter("amount"));
             String paymentType = request.getParameter("paymentType");
-            boolean recurring = Boolean.parseBoolean(request.getParameter("recurring"));
+            String foreverSubscriptionParam = request.getParameter("foreverSubscription");
+            boolean isForeverSubscription = "on".equals(foreverSubscriptionParam);
 
-            Payment newPayment = new Payment(0, userId, packageId, new Timestamp(System.currentTimeMillis()), amount, paymentType, recurring);
+            Payment newPayment = new Payment(0, userId, packageId, new Timestamp(System.currentTimeMillis()), amount, paymentType, isForeverSubscription);
             recordPayment(newPayment);
             response.sendRedirect(request.getContextPath() + "/admin/payments");
         }
         // You might add logic for updating or deleting payments here if needed
+    }
+
+    private void processAutoPayment() {
+        System.out.println("Checking for 'forever' recurring payments...");
+        List<Payment> foreverPayments = getForeverRecurringPayments();
+
+        for (Payment payment : foreverPayments) {
+            System.out.println("Simulating automatic payment for user " + payment.getUserId() + " (forever recurring)");
+            Payment newPayment = new Payment(0, payment.getUserId(), payment.getPackageId(),
+                    new Timestamp(System.currentTimeMillis()), payment.getAmount(),
+                    "Automatic Recurring (Simulated)", true); // 'recurring' is now our 'forever' flag
+            recordPayment(newPayment);
+            System.out.println("Simulated automatic payment recorded.");
+        }
+    }
+
+    private List<Payment> getForeverRecurringPayments() {
+        List<Payment> foreverPayments = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = DatabaseConnection.getConnection();
+            String sql = "SELECT * FROM payments WHERE recurring = TRUE";
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Payment payment = new Payment();
+                payment.setId(resultSet.getInt("id"));
+                payment.setUserId(resultSet.getInt("user_id"));
+                payment.setPackageId(resultSet.getInt("package_id"));
+                payment.setPaymentDate(resultSet.getTimestamp("payment_date"));
+                payment.setAmount(resultSet.getDouble("amount"));
+                payment.setPaymentType(resultSet.getString("payment_type"));
+                payment.setRecurring(resultSet.getBoolean("recurring"));
+                foreverPayments.add(payment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DatabaseConnection.close(resultSet);
+            DatabaseConnection.close(preparedStatement);
+            DatabaseConnection.close(connection);
+        }
+        return foreverPayments;
     }
 
     private List<Payment> getAllPayments() {
@@ -87,9 +161,8 @@ public class PaymentServlet extends HttpServlet {
                 payment.setPaymentDate(resultSet.getTimestamp("payment_date"));
                 payment.setAmount(resultSet.getDouble("amount"));
                 payment.setPaymentType(resultSet.getString("payment_type"));
-                payment.setRecurring(resultSet.getBoolean("recurring"));
+                payment.setRecurring(resultSet.getBoolean("recurring")); // Using 'recurring' as 'forever'
 
-                // Optionally fetch related user and package names for display
                 User user = new User();
                 user.setName(resultSet.getString("user_name"));
                 payment.setUser(user);
@@ -134,7 +207,7 @@ public class PaymentServlet extends HttpServlet {
                 payment.setPaymentDate(resultSet.getTimestamp("payment_date"));
                 payment.setAmount(resultSet.getDouble("amount"));
                 payment.setPaymentType(resultSet.getString("payment_type"));
-                payment.setRecurring(resultSet.getBoolean("recurring"));
+                payment.setRecurring(resultSet.getBoolean("recurring")); // Using 'recurring' as 'forever'
 
                 User user = new User();
                 user.setName(resultSet.getString("user_name"));
@@ -176,7 +249,6 @@ public class PaymentServlet extends HttpServlet {
         }
     }
 
-    // Helper methods to fetch all users and packages for the record payment form
     private List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         Connection connection = null;
