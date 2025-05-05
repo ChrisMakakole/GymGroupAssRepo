@@ -81,8 +81,8 @@ public class PaymentServlet extends HttpServlet {
             int packageId = Integer.parseInt(request.getParameter("packageId"));
             double amount = Double.parseDouble(request.getParameter("amount"));
             String paymentType = request.getParameter("paymentType");
-            String foreverSubscriptionParam = request.getParameter("foreverSubscription");
-            boolean isForeverSubscription = "on".equals(foreverSubscriptionParam);
+            //String foreverSubscriptionParam = request.getParameter("recurring");
+            boolean isForeverSubscription = Boolean.parseBoolean(request.getParameter("recurring"));
 
             Payment newPayment = new Payment(0, userId, packageId, new Timestamp(System.currentTimeMillis()), amount, paymentType, isForeverSubscription);
             recordPayment(newPayment);
