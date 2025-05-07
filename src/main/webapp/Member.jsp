@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page isELIgnored="true" language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -240,8 +240,9 @@
 
     <!-- Search and Action Buttons -->
     <div class="search-bar">
-        <input type="text" class="search-input" placeholder="Search first or last name...">
+        <input type="text" class="search-input" placeholder="Search first or last name..." >
     </div>
+    <div id="searchResults"></div>
 
 
     <!-- Members Container -->
@@ -271,5 +272,29 @@
         </div>
     </div>
 </div>
+    
+    <script>
+    const searchInput = document.querySelector('.search-input');
+    const resultsContainer = document.getElementById('searchResults');
+
+    searchInput.addEventListener('input', function () {
+        const query = this.value.trim();
+
+        if (query.length === 0) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+
+        fetch(`searchMembers.jsp?query=${encodeURIComponent(query)}`)
+            .then(response => response.text())
+            .then(data => {
+                resultsContainer.innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error fetching search results:', error);
+            });
+    });
+</script>
+
 </body>
 </html>
