@@ -9,9 +9,9 @@ import jakarta.servlet.http.*;
 @WebServlet(name = "Members_reg", urlPatterns = {"/Members_reg"})
 public class Members_reg extends HttpServlet {
     
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/GymManagement?useSSL=false&&allowPublicKeyRetrieval=true";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/gym_management?useSSL=false&&allowPublicKeyRetrieval=true";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "59908114";
+    private static final String DB_PASSWORD = "12345";
 
     static {
         try {

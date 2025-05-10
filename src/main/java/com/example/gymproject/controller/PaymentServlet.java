@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.invoke.SwitchPoint;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -85,7 +86,8 @@ public class PaymentServlet extends HttpServlet {
             boolean isForeverSubscription = Boolean.parseBoolean(request.getParameter("recurring"));
 
             Payment newPayment = new Payment(0, userId, packageId, new Timestamp(System.currentTimeMillis()), amount, paymentType, isForeverSubscription);
-            recordPayment(newPayment);
+
+            recordPayment(newPayment,"payments");
             response.sendRedirect(request.getContextPath() + "/admin/payments");
         }
         // You might add logic for updating or deleting payments here if needed
@@ -100,8 +102,8 @@ public class PaymentServlet extends HttpServlet {
             Payment newPayment = new Payment(0, payment.getUserId(), payment.getPackageId(),
                     new Timestamp(System.currentTimeMillis()), payment.getAmount(),
                     "Automatic Recurring (Simulated)", true); // 'recurring' is now our 'forever' flag
-            recordPayment(newPayment);
-            System.out.println("Simulated automatic payment recorded.");
+            recordPayment(newPayment,"subscriptions");
+            System.out.println("Simulated automatic 766payment recorded.");
         }
     }
 
@@ -147,7 +149,7 @@ public class PaymentServlet extends HttpServlet {
         try {
             connection = DatabaseConnection.getConnection();
             String sql = "SELECT p.*, u.name AS user_name, pkg.name AS package_name " +
-                    "FROM payments p " +
+                    "FROM subscriptions p " +
                     "JOIN users u ON p.user_id = u.id " +
                     "JOIN packages pkg ON p.package_id = pkg.id";
             preparedStatement = connection.prepareStatement(sql);
@@ -191,7 +193,7 @@ public class PaymentServlet extends HttpServlet {
         try {
             connection = DatabaseConnection.getConnection();
             String sql = "SELECT p.*, u.name AS user_name, pkg.name AS package_name " +
-                    "FROM payments p " +
+                    "FROM subscriptions p " +
                     "JOIN users u ON p.user_id = u.id " +
                     "JOIN packages pkg ON p.package_id = pkg.id " +
                     "WHERE p.id = ?";
@@ -226,13 +228,21 @@ public class PaymentServlet extends HttpServlet {
         return payment;
     }
 
-    private void recordPayment(Payment payment) {
+    private void recordPayment(Payment payment, String Query) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        if(Query=="payments")
+        {
+            System.out.println("payment");   
+        }
+        else if (Query=="subscriptions")
+        {
+            System.out.println("subscriptions");
+        }
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "INSERT INTO payments (user_id, package_id, payment_date, amount, payment_type, recurring) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO "+ Query +"(user_id, package_id, payment_date, amount, payment_type, recurring) VALUES (?, ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, payment.getUserId());
             preparedStatement.setInt(2, payment.getPackageId());

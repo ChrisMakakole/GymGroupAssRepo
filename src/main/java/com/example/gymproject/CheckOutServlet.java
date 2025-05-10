@@ -8,52 +8,68 @@ import jakarta.servlet.http.*;
 
 @WebServlet("/CheckOutServlet")
 public class CheckOutServlet extends HttpServlet {
-    
+
     private static final String DB_URL = "jdbc:mysql://localhost:3306/gym_management?useSSL=false&&allowPublicKeyRetrieval=true";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "12345";
 
     static {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver"); // Use com.mysql.cj.jdbc.Driver
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("MySQL JDBC Driver not found", e);
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String phone = request.getParameter("phone");
         String name = request.getParameter("name");
-        
-        // Set response type before any output
+
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-        
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(
-                 "UPDATE users SET attendance = 'out' WHERE phone = ?")) {
-            
-            pstmt.setString(1, phone);
-            int rowsUpdated = pstmt.executeUpdate();
-            
-            if (rowsUpdated > 0) {
-                // Set success message in session
-                request.getSession().setAttribute("message", "Member checked in successfully");
-                request.getSession().setAttribute("messageType", "success");
-            } else {
-                request.getSession().setAttribute("message", "No member found with phone: " + phone);
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            // Check if the member is currently checked in
+            if (!isCurrentlyCheckedIn(conn, phone)) {
+                request.getSession().setAttribute("message", "Member with phone " + phone + " is not currently checked in.");
                 request.getSession().setAttribute("messageType", "error");
+            } else {
+                // Record checkout time
+                if (recordCheckOut(conn, phone)) {
+                    request.getSession().setAttribute("message", "Member " + name + " checked out successfully.");
+                    request.getSession().setAttribute("messageType", "success");
+                } else {
+                    request.getSession().setAttribute("message", "Failed to record check-out for member with phone: " + phone);
+                    request.getSession().setAttribute("messageType", "error");
+                }
             }
-            
         } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
             request.getSession().setAttribute("message", "Database error: " + e.getMessage());
             request.getSession().setAttribute("messageType", "error");
         }
-        
-        // Redirect back to member list
-        response.sendRedirect(request.getContextPath() + "/index.jsp");
+
+        response.sendRedirect(request.getContextPath() + "/Attendance.jsp"); // Redirect to Attendance.jsp
+    }
+
+    private boolean isCurrentlyCheckedIn(Connection conn, String phone) throws SQLException {
+        String query = "SELECT id FROM attendance WHERE phone = ? AND attendance_date = CURDATE() AND check_out_time IS NULL";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, phone);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next(); // Returns true if there's an active check-in for today
+        }
+    }
+
+    private boolean recordCheckOut(Connection conn, String phone) throws SQLException {
+        String query = "UPDATE attendance SET check_out_time = NOW() WHERE phone = ? AND attendance_date = CURDATE() AND check_out_time IS NULL";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, phone);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        }
     }
 }

@@ -10,9 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55f8a36e-9560-4854-b011-0dae4ece9a65" name="Changes" comment="init app">
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/mark_attendance.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/admin/view_attendance.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_02_05_2025_12_00_pm_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_02_05_2025_12_00_pm__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/gymproject/CheckInServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/CheckInServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/gymproject/CheckOutServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/CheckOutServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/gymproject/Members_reg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/Members_reg.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/PaymentServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/PaymentServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/Attendance.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/Attendance.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/Docs/dbscript.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/Docs/dbscript.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/searchMembers.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/searchMembers.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,8 +36,8 @@
       <list>
         <option value="HTML File" />
         <option value="JavaScript File" />
-        <option value="Jsp File" />
         <option value="Class" />
+        <option value="Jsp File" />
       </list>
     </option>
   </component>
@@ -74,7 +83,7 @@
     </key>
   </component>
   <component name="RunManager" selected="GlassFish Server.GlassFish 7.0.14">
-    <configuration name="DatabaseConnection" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="DatabaseConnection" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="com.example.gymproject.util.DatabaseConnection" />
       <module name="gymProject" />
       <extension name="coverage">
@@ -106,6 +115,36 @@
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="9009" />
       </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
       <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
         <option name="USE_ENV_VARIABLES" value="true" />
         <STARTUP>
@@ -128,6 +167,10 @@
         </option>
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.DatabaseConnection" />
+      <item itemvalue="GlassFish Server.GlassFish 7.0.14" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.DatabaseConnection" />
@@ -150,7 +193,11 @@
       <workItem from="1745849943382" duration="832000" />
       <workItem from="1745920521655" duration="728000" />
       <workItem from="1746179994975" duration="17697000" />
-      <workItem from="1746447851070" duration="5367000" />
+      <workItem from="1746447851070" duration="5481000" />
+      <workItem from="1746615573332" duration="3226000" />
+      <workItem from="1746624134018" duration="3188000" />
+      <workItem from="1746863662176" duration="8968000" />
+      <workItem from="1746876053747" duration="8028000" />
     </task>
     <task id="LOCAL-00001" summary="init app">
       <created>1745413426664</created>
@@ -208,7 +255,14 @@
       <option name="project" value="LOCAL" />
       <updated>1746201864411</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="init app">
+      <created>1746453927296</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1746453927297</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
