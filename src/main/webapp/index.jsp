@@ -122,6 +122,12 @@
       </a>
     </li>
     <li>
+      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/trainer_shifts')">
+        <i class='bx bx-list-ul'></i>
+        <span class="links_name">view Attendance</span>
+      </a>
+    </li>
+    <li>
       <a href="#" onclick="loadContent('ViewTrainers.jsp')">
         <i class='bx bx-list-ul'></i>
         <span class="links_name">View Trainers</span>
