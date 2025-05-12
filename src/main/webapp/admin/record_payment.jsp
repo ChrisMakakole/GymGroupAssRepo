@@ -100,7 +100,7 @@
       text-align: center;
     }
 
-    /* Card Payment Styles */
+    /* Payment Method Styles */
     .payment-method-tabs {
       display: flex;
       margin-bottom: 20px;
@@ -159,12 +159,16 @@
   <div class="error-message"><%= request.getAttribute("errorMessage") %></div>
   <% } %>
 
-  <form action="${pageContext.request.contextPath}/admin/payments" method="post">
+  <form action="${pageContext.request.contextPath}/admin/payments" method="post" onsubmit="preparePaymentData()">
     <input type="hidden" name="action" value="recordPayment">
+    <input type="hidden" id="hiddenUserName" name="userName">
+    <input type="hidden" id="hiddenPackageName" name="packageName">
+    <input type="hidden" id="hiddenPackagePrice" name="packagePrice">
+    <input type="hidden" id="hiddenPaymentMethod" name="paymentMethod" value="credit_card">
 
     <div class="form-group">
       <label for="userId">User:</label>
-      <select id="userId" name="userId" required>
+      <select id="userId" name="userId" required onchange="updateHiddenUser()">
         <option value="">Select User</option>
         <%
           List<User> users = (List<User>) request.getAttribute("users");
@@ -181,7 +185,7 @@
 
     <div class="form-group">
       <label for="packageId">Package:</label>
-      <select id="packageId" name="packageId" required>
+      <select id="packageId" name="packageId" required onchange="updateHiddenPackage()">
         <option value="">Select Package</option>
         <%
           List<Package> packages = (List<Package>) request.getAttribute("packages");
@@ -200,7 +204,7 @@
       <label for="paymentDate">Payment Date:</label>
       <% SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); %>
       <input type="text" id="paymentDate" name="paymentDate" value="<%= sdf.format(new Date()) %>" required>
-      <small>Format: yyyy-MM-dd HH:mm:ss</small>
+      <small>Format:<\ctrl3348>-MM-dd HH:mm:ss</small>
     </div>
 
     <div class="form-group">
@@ -208,20 +212,19 @@
       <input type="number" id="amount" name="amount" step="0.01" required>
     </div>
 
-    <!-- Payment Method Selection -->
     <div class="form-group">
       <label>Payment Method:</label>
       <div class="payment-method-tabs">
-        <div class="payment-tab active" onclick="showPaymentTab('card')">Credit/Debit Card</div>
+        <div class="payment-tab active" onclick="showPaymentTab('card'); document.getElementById('hiddenPaymentMethod').value = 'credit_card'">Credit/Debit Card</div>
+        <div class="payment-tab" onclick="showPaymentTab('other'); document.getElementById('hiddenPaymentMethod').value = 'other'">Other</div>
       </div>
     </div>
 
-    <!-- Card Payment Form -->
     <div id="cardPayment" class="payment-content active">
       <div class="card-form-group">
         <label for="cardNumber">Card Number:</label>
-        <input type="text" id="cardNumber" name="cardNumber" pattern="\d{16}" maxlength="16" 
-               placeholder="1200003334320000" required>
+        <input type="text" id="cardNumber" name="cardNumber" pattern="\d{16}" maxlength="16"
+               placeholder="1200003334320000">
         <div class="card-icons">
           <img src="${pageContext.request.contextPath}/images/Amex1.png" alt="American Express">
           <img src="${pageContext.request.contextPath}/images/masterM.png" alt="Mastercard">
@@ -231,25 +234,24 @@
 
       <div class="card-form-group">
         <label for="expiryDate">Expiry Month & Year:</label>
-        <input type="month" id="expiryDate" name="expiryDate" min="<%= new SimpleDateFormat("yyyy-MM").format(new Date()) %>" required>
+        <input type="month" id="expiryDate" name="expiryDate" min="<%= new SimpleDateFormat("yyyy-MM").format(new Date()) %>">
       </div>
 
       <div class="card-form-group">
         <label for="cardholderName">Cardholder Name:</label>
-        <input type="text" id="cardholderName" name="cardholderName" pattern="[A-Za-z\s]+" placeholder="Name" required>
+        <input type="text" id="cardholderName" name="cardholderName" pattern="[A-Za-z\s]+" placeholder="Name">
       </div>
 
       <div class="card-form-group">
         <label for="cvv">CVV:</label>
-        <input type="number" id="cvv" name="cvv" min="100" max="999"  placeholder="849" required>
+        <input type="number" id="cvv" name="cvv" min="100" max="999" placeholder="849">
       </div>
     </div>
 
-    <!-- Other Payment Form -->
     <div id="otherPayment" class="payment-content">
       <div class="form-group">
         <label for="paymentType">Payment Type:</label>
-        <input type="text" id="paymentType" name="paymentType" placeholder="e.g., Bank Transfer, Cash">
+        <input type="text" id="paymentType" name="paymentType" placeholder="e.g., Bank Transfer, Cash" required>
       </div>
     </div>
 
@@ -271,24 +273,80 @@
     document.querySelectorAll('.payment-content').forEach(content => {
       content.classList.remove('active');
     });
-    
+
     // Show the selected payment content
     document.getElementById(tabName + 'Payment').classList.add('active');
-    
+
     // Update tab styling
     document.querySelectorAll('.payment-tab').forEach(tab => {
       tab.classList.remove('active');
     });
     event.currentTarget.classList.add('active');
+
+    // Update hidden payment method
+    document.getElementById('hiddenPaymentMethod').value = tabName;
+
+    // Toggle required attributes based on the active tab
+    const cardNumberInput = document.getElementById('cardNumber');
+    const expiryDateInput = document.getElementById('expiryDate');
+    const cardholderNameInput = document.getElementById('cardholderName');
+    const cvvInput = document.getElementById('cvv');
+    const otherPaymentTypeInput = document.getElementById('paymentType');
+
+    if (tabName === 'card') {
+      cardNumberInput.setAttribute('required', 'required');
+      expiryDateInput.setAttribute('required', 'required');
+      cardholderNameInput.setAttribute('required', 'required');
+      cvvInput.setAttribute('required', 'required');
+      otherPaymentTypeInput.removeAttribute('required');
+    } else if (tabName === 'other') {
+      cardNumberInput.removeAttribute('required');
+      expiryDateInput.removeAttribute('required');
+      cardholderNameInput.removeAttribute('required');
+      cvvInput.removeAttribute('required');
+      otherPaymentTypeInput.setAttribute('required', 'required');
+    }
   }
-  
+
+  function updateHiddenUser() {
+    const selectElement = document.getElementById('userId');
+    document.getElementById('hiddenUserName').value = selectElement.options[selectElement.selectedIndex].text;
+  }
+
+  function updateHiddenPackage() {
+    const selectElement = document.getElementById('packageId');
+    const selectedText = selectElement.options[selectElement.selectedIndex].text;
+    const packageNameMatch = selectedText.match(/^([^ (]+)/); // Extract name before the first space or parenthesis
+    const priceMatch = selectedText.match(/\(([^)]+)\)/);
+
+    if (packageNameMatch) {
+      document.getElementById('hiddenPackageName').value = packageNameMatch[1].trim();
+    }
+    if (priceMatch) {
+      document.getElementById('hiddenPackagePrice').value = parseFloat(priceMatch[1].replace(/[^\d.]/g, ''));
+    }
+  }
+
+  function preparePaymentData() {
+    updateHiddenUser();
+    updateHiddenPackage();
+    // The paymentMethod is already set when the tab is clicked
+  }
+
   // Auto-fill amount when package is selected
   document.getElementById('packageId').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
     if (selectedOption.text.includes('(')) {
       const price = selectedOption.text.match(/\(([^)]+)\)/)[1];
       document.getElementById('amount').value = parseFloat(price.replace(/[^\d.]/g, ''));
+    } else {
+      document.getElementById('amount').value = ''; // Clear amount if no price in package name
     }
+  });
+
+  // Initialize the 'card' tab as active on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    showPaymentTab('card');
   });
 </script>
 </body>

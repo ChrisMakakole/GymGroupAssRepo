@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.invoke.SwitchPoint;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,7 +56,7 @@ public class PaymentServlet extends HttpServlet {
         String action = request.getParameter("action");
         if ("view".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
-            Payment payment = getPaymentById(id);
+            Payment payment = getPaymentById(id, "subscriptions"); // Assuming you view from subscriptions
             request.setAttribute("payment", payment);
             request.getRequestDispatcher("/admin/view_payments.jsp").forward(request, response);
         } else if ("record".equals(action)) {
@@ -78,57 +77,91 @@ public class PaymentServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("recordPayment".equals(action)) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            int packageId = Integer.parseInt(request.getParameter("packageId"));
+            String userName = request.getParameter("userName");
+            String packageName = request.getParameter("packageName");
+            double packagePrice = Double.parseDouble(request.getParameter("packagePrice"));
             double amount = Double.parseDouble(request.getParameter("amount"));
+            String paymentMethod = request.getParameter("paymentMethod");
+            String cardNumber = request.getParameter("cardNumber");
+            String cardExpiry = request.getParameter("cardExpiry");
+            String cardholderName = request.getParameter("cardholderName");
+            String cardCvv = request.getParameter("cardCvv");
             String paymentType = request.getParameter("paymentType");
-            //String foreverSubscriptionParam = request.getParameter("recurring");
-            boolean isForeverSubscription = Boolean.parseBoolean(request.getParameter("recurring"));
+            boolean isRecurring = Boolean.parseBoolean(request.getParameter("recurring"));
 
-            Payment newPayment = new Payment(0, userId, packageId, new Timestamp(System.currentTimeMillis()), amount, paymentType, isForeverSubscription);
+            Payment newPayment = new Payment();
+            newPayment.setUserName(userName);
+            newPayment.setPackageName(packageName);
+            newPayment.setPackagePrice(packagePrice);
+            newPayment.setPaymentDate(new Timestamp(System.currentTimeMillis()));
+            newPayment.setAmount(amount);
+            newPayment.setPaymentMethod(paymentMethod);
+            newPayment.setCardNumber(cardNumber);
+            newPayment.setCardExpiry(cardExpiry);
+            newPayment.setCardholderName(cardholderName);
+            newPayment.setCardCvv(cardCvv);
+            newPayment.setPaymentType(paymentType);
+            newPayment.setRecurring(isRecurring);
 
-            recordPayment(newPayment,"payments");
+            recordPayment(newPayment, "payments");
             response.sendRedirect(request.getContextPath() + "/admin/payments");
         }
         // You might add logic for updating or deleting payments here if needed
     }
 
     private void processAutoPayment() {
-        System.out.println("Checking for 'forever' recurring payments...");
-        List<Payment> foreverPayments = getForeverRecurringPayments();
+        System.out.println("Checking for 'forever' recurring subscriptions...");
+        List<Payment> foreverSubscriptions = getForeverRecurringPayments();
 
-        for (Payment payment : foreverPayments) {
-            System.out.println("Simulating automatic payment for user " + payment.getUserId() + " (forever recurring)");
-            Payment newPayment = new Payment(0, payment.getUserId(), payment.getPackageId(),
-                    new Timestamp(System.currentTimeMillis()), payment.getAmount(),
-                    "Automatic Recurring (Simulated)", true); // 'recurring' is now our 'forever' flag
-            recordPayment(newPayment,"subscriptions");
-            System.out.println("Simulated automatic 766payment recorded.");
+        for (Payment subscription : foreverSubscriptions) {
+            System.out.println("Simulating automatic payment for user " + subscription.getUserName() + " (forever recurring)");
+            Payment newSubscription = new Payment();
+            newSubscription.setUserName(subscription.getUserName());
+            newSubscription.setPackageName(subscription.getPackageName());
+            newSubscription.setPackagePrice(subscription.getPackagePrice());
+            newSubscription.setPaymentDate(new Timestamp(System.currentTimeMillis()));
+            newSubscription.setAmount(subscription.getAmount());
+            newSubscription.setPaymentMethod(subscription.getPaymentMethod());
+            newSubscription.setCardNumber(subscription.getCardNumber());
+            newSubscription.setCardExpiry(subscription.getCardExpiry());
+            newSubscription.setCardholderName(subscription.getCardholderName());
+            newSubscription.setCardCvv(subscription.getCardCvv());
+            newSubscription.setPaymentType("Automatic Recurring (Simulated)");
+            newSubscription.setRecurring(true); // Still using recurring flag
+
+            recordPayment(newSubscription, "subscriptions");
+            System.out.println("Simulated automatic payment recorded in subscriptions.");
         }
     }
 
     private List<Payment> getForeverRecurringPayments() {
-        List<Payment> foreverPayments = new ArrayList<>();
+        List<Payment> foreverSubscriptions = new ArrayList<>();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "SELECT * FROM payments WHERE recurring = TRUE";
+            String sql = "SELECT * FROM subscriptions WHERE is_recurring = TRUE";
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                Payment payment = new Payment();
-                payment.setId(resultSet.getInt("id"));
-                payment.setUserId(resultSet.getInt("user_id"));
-                payment.setPackageId(resultSet.getInt("package_id"));
-                payment.setPaymentDate(resultSet.getTimestamp("payment_date"));
-                payment.setAmount(resultSet.getDouble("amount"));
-                payment.setPaymentType(resultSet.getString("payment_type"));
-                payment.setRecurring(resultSet.getBoolean("recurring"));
-                foreverPayments.add(payment);
+                Payment subscription = new Payment();
+                subscription.setPaymentId(resultSet.getInt("payment_id"));
+                subscription.setUserName(resultSet.getString("user_name"));
+                subscription.setPackageName(resultSet.getString("package_name"));
+                subscription.setPackagePrice(resultSet.getDouble("package_price"));
+                subscription.setPaymentDate(resultSet.getTimestamp("payment_date"));
+                subscription.setAmount(resultSet.getDouble("amount"));
+                subscription.setPaymentMethod(resultSet.getString("payment_method"));
+                subscription.setCardNumber(resultSet.getString("card_number"));
+                subscription.setCardExpiry(resultSet.getString("card_expiry"));
+                subscription.setCardholderName(resultSet.getString("cardholder_name"));
+                subscription.setCardCvv(resultSet.getString("card_cvv"));
+                subscription.setPaymentType(resultSet.getString("payment_type"));
+                subscription.setRecurring(resultSet.getBoolean("is_recurring"));
+                foreverSubscriptions.add(subscription);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -137,7 +170,7 @@ public class PaymentServlet extends HttpServlet {
             DatabaseConnection.close(preparedStatement);
             DatabaseConnection.close(connection);
         }
-        return foreverPayments;
+        return foreverSubscriptions;
     }
 
     private List<Payment> getAllPayments() {
@@ -148,29 +181,25 @@ public class PaymentServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "SELECT p.*, u.name AS user_name, pkg.name AS package_name " +
-                    "FROM subscriptions p " +
-                    "JOIN users u ON p.user_id = u.id " +
-                    "JOIN packages pkg ON p.package_id = pkg.id";
+            String sql = "SELECT * FROM subscriptions"; // Assuming you manage and view from subscriptions
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 Payment payment = new Payment();
-                payment.setId(resultSet.getInt("id"));
-                payment.setUserId(resultSet.getInt("user_id"));
-                payment.setPackageId(resultSet.getInt("package_id"));
+                payment.setPaymentId(resultSet.getInt("payment_id"));
+                payment.setUserName(resultSet.getString("user_name"));
+                payment.setPackageName(resultSet.getString("package_name"));
+                payment.setPackagePrice(resultSet.getDouble("package_price"));
                 payment.setPaymentDate(resultSet.getTimestamp("payment_date"));
                 payment.setAmount(resultSet.getDouble("amount"));
+                payment.setPaymentMethod(resultSet.getString("payment_method"));
+                payment.setCardNumber(resultSet.getString("card_number"));
+                payment.setCardExpiry(resultSet.getString("card_expiry"));
+                payment.setCardholderName(resultSet.getString("cardholder_name"));
+                payment.setCardCvv(resultSet.getString("card_cvv"));
                 payment.setPaymentType(resultSet.getString("payment_type"));
-                payment.setRecurring(resultSet.getBoolean("recurring")); // Using 'recurring' as 'forever'
-
-                User user = new User();
-                user.setName(resultSet.getString("user_name"));
-                payment.setUser(user);
-                Package pkg = new Package();
-                pkg.setName(resultSet.getString("package_name"));
-                payment.setPackage(pkg);
+                payment.setRecurring(resultSet.getBoolean("is_recurring"));
 
                 payments.add(payment);
             }
@@ -184,7 +213,7 @@ public class PaymentServlet extends HttpServlet {
         return payments;
     }
 
-    private Payment getPaymentById(int id) {
+    private Payment getPaymentById(int id, String table) {
         Payment payment = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -192,31 +221,26 @@ public class PaymentServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "SELECT p.*, u.name AS user_name, pkg.name AS package_name " +
-                    "FROM subscriptions p " +
-                    "JOIN users u ON p.user_id = u.id " +
-                    "JOIN packages pkg ON p.package_id = pkg.id " +
-                    "WHERE p.id = ?";
+            String sql = "SELECT * FROM " + table + " WHERE payment_id = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 payment = new Payment();
-                payment.setId(resultSet.getInt("id"));
-                payment.setUserId(resultSet.getInt("user_id"));
-                payment.setPackageId(resultSet.getInt("package_id"));
+                payment.setPaymentId(resultSet.getInt("payment_id"));
+                payment.setUserName(resultSet.getString("user_name"));
+                payment.setPackageName(resultSet.getString("package_name"));
+                payment.setPackagePrice(resultSet.getDouble("package_price"));
                 payment.setPaymentDate(resultSet.getTimestamp("payment_date"));
                 payment.setAmount(resultSet.getDouble("amount"));
+                payment.setPaymentMethod(resultSet.getString("payment_method"));
+                payment.setCardNumber(resultSet.getString("card_number"));
+                payment.setCardExpiry(resultSet.getString("card_expiry"));
+                payment.setCardholderName(resultSet.getString("cardholder_name"));
+                payment.setCardCvv(resultSet.getString("card_cvv"));
                 payment.setPaymentType(resultSet.getString("payment_type"));
-                payment.setRecurring(resultSet.getBoolean("recurring")); // Using 'recurring' as 'forever'
-
-                User user = new User();
-                user.setName(resultSet.getString("user_name"));
-                payment.setUser(user);
-                Package pkg = new Package();
-                pkg.setName(resultSet.getString("package_name"));
-                payment.setPackage(pkg);
+                payment.setRecurring(resultSet.getBoolean("is_recurring"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -228,28 +252,26 @@ public class PaymentServlet extends HttpServlet {
         return payment;
     }
 
-    private void recordPayment(Payment payment, String Query) {
+    private void recordPayment(Payment payment, String table) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        if(Query=="payments")
-        {
-            System.out.println("payment");   
-        }
-        else if (Query=="subscriptions")
-        {
-            System.out.println("subscriptions");
-        }
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "INSERT INTO "+ Query +"(user_id, package_id, payment_date, amount, payment_type, recurring) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO " + table + " (user_name, package_name, package_price, payment_date, amount, payment_method, card_number, card_expiry, cardholder_name, card_cvv, payment_type, is_recurring) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, payment.getUserId());
-            preparedStatement.setInt(2, payment.getPackageId());
-            preparedStatement.setTimestamp(3, payment.getPaymentDate());
-            preparedStatement.setDouble(4, payment.getAmount());
-            preparedStatement.setString(5, payment.getPaymentType());
-            preparedStatement.setBoolean(6, payment.isRecurring());
+            preparedStatement.setString(1, payment.getUserName());
+            preparedStatement.setString(2, payment.getPackageName());
+            preparedStatement.setDouble(3, payment.getPackagePrice());
+            preparedStatement.setTimestamp(4, payment.getPaymentDate());
+            preparedStatement.setDouble(5, payment.getAmount());
+            preparedStatement.setString(6, payment.getPaymentMethod());
+            preparedStatement.setString(7, payment.getCardNumber());
+            preparedStatement.setString(8, payment.getCardExpiry());
+            preparedStatement.setString(9, payment.getCardholderName());
+            preparedStatement.setString(10, payment.getCardCvv());
+            preparedStatement.setString(11, payment.getPaymentType());
+            preparedStatement.setBoolean(12, payment.isRecurring());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -295,7 +317,7 @@ public class PaymentServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "SELECT id, name FROM packages";
+            String sql = "SELECT id, name, price FROM packages"; // Fetch price as well
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
 
@@ -303,6 +325,7 @@ public class PaymentServlet extends HttpServlet {
                 Package pkg = new Package();
                 pkg.setId(resultSet.getInt("id"));
                 pkg.setName(resultSet.getString("name"));
+                pkg.setPrice(resultSet.getDouble("price")); // Fetch the price
                 packages.add(pkg);
             }
         } catch (SQLException e) {

@@ -2,16 +2,14 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.example.gymproject.model.Payment" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.text.NumberFormat" %>
-<%@ page import="java.util.Locale" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Manage Payments</title>
+    <title>Manage Subscriptions</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
-        #body {
+        body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
@@ -19,7 +17,7 @@
         }
 
         .container {
-            max-width: 960px;
+            max-width: 1200px;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
@@ -31,27 +29,6 @@
             color: #333;
             text-align: center;
             margin-bottom: 20px;
-        }
-
-        .record-button-container {
-            text-align: right;
-            margin-bottom: 15px;
-        }
-
-        .record-button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .record-button:hover {
-            background-color: #0056b3;
         }
 
         table {
@@ -75,94 +52,107 @@
             background-color: #f9f9f9;
         }
 
-        .action-buttons a {
-            display: inline-block;
-            margin-right: 5px;
+        .action-links a {
+            margin-right: 10px;
             text-decoration: none;
-            background-color: #6c757d;
+            color: #007bff;
+        }
+
+        .action-links a:hover {
+            text-decoration: underline;
+        }
+
+        .no-records {
+            text-align: center;
+            color: #777;
+            margin-top: 20px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .button-container a {
+            display: inline-block;
+            padding: 10px 15px;
+            text-decoration: none;
+            background-color: #28a745;
             color: white;
-            padding: 8px 12px;
             border-radius: 4px;
-            font-size: 14px;
             transition: background-color 0.3s ease;
+            margin-right: 10px;
         }
 
-        .action-buttons a:hover {
-            background-color: #5a6268;
-        }
-
-        .recurring-yes {
-            color: green;
-            font-weight: bold;
-        }
-
-        .recurring-no {
-            color: red;
+        .button-container a:hover {
+            background-color: #218838;
         }
     </style>
 </head>
-<body id="body">
+<body>
 <div class="container">
-    <h1>Manage Payments</h1>
-
-    <div class="record-button-container">
-<%--        <a href="${pageContext.request.contextPath}/admin/payments?action=record" class="record-button">Record New Payment</a>--%>
-        <button class="record-button" onclick="loadContent('admin/record_payment.jsp')">Record New Payment</button>
-    </div>
+    <h1>Manage Subscriptions</h1>
 
     <%
         List<Payment> payments = (List<Payment>) request.getAttribute("payments");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         if (payments != null && !payments.isEmpty()) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault()); // You might want to specify a locale
     %>
     <table>
         <thead>
         <tr>
             <th>ID</th>
-            <th>User</th>
-            <th>Package</th>
+            <th>User Name</th>
+            <th>Package Name</th>
+            <th>Package Price</th>
             <th>Payment Date</th>
             <th>Amount</th>
+            <th>Method</th>
+            <th>Card Number</th>
+            <th>Expiry</th>
+            <th>Cardholder</th>
             <th>Type</th>
             <th>Recurring</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <% for (Payment payment : payments) { %>
+        <%
+            for (Payment payment : payments) {
+        %>
         <tr>
-            <td><%= payment.getId() %></td>
-            <td><%= payment.getUser().getName() %></td>
-            <td><%= payment.getPackage().getName() %></td>
-            <td><%= dateFormat.format(payment.getPaymentDate()) %></td>
-            <td><%= currencyFormat.format(payment.getAmount()) %></td>
-            <td><%= payment.getPaymentType() %></td>
-            <td>
-                <% if (payment.isRecurring()) { %>
-                <span class="recurring-yes">Yes</span>
-                <% } else { %>
-                <span class="recurring-no">No</span>
-                <% } %>
-            </td>
-            <td class="action-buttons">
-<%--                <a href="${pageContext.request.contextPath}/admin/payments?action=view&id=<%= payment.getId() %>">View</a>--%>
-                <button class="record-button" onclick="loadContent('admin/payments?action=view&id=<%= payment.getId() %>')">View</button>
+            <td><%= payment.getPaymentId() %></td>
+            <td><%= payment.getUserName() %></td>
+            <td><%= payment.getPackageName() %></td>
+            <td><%= String.format("%.2f", payment.getPackagePrice()) %></td>
+            <td><%= sdf.format(payment.getPaymentDate()) %></td>
+            <td><%= String.format("%.2f", payment.getAmount()) %></td>
+            <td><%= payment.getPaymentMethod() %></td>
+            <td><%= payment.getCardNumber() != null ? payment.getCardNumber() : "-" %></td>
+            <td><%= payment.getCardExpiry() != null ? payment.getCardExpiry() : "-" %></td>
+            <td><%= payment.getCardholderName() != null ? payment.getCardholderName() : "-" %></td>
+            <td><%= payment.getPaymentType() != null ? payment.getPaymentType() : "-" %></td>
+            <td><%= payment.isRecurring() ? "Yes" : "No" %></td>
+            <td class="action-links">
+                <a href="${pageContext.request.contextPath}/admin/payments?action=view&id=<%= payment.getPaymentId() %>">View</a>
             </td>
         </tr>
-        <% } %>
+        <%
+            }
+        %>
         </tbody>
     </table>
     <%
     } else {
     %>
-    <p>No payments recorded yet.</p>
+    <p class="no-records">No subscriptions found.</p>
     <%
         }
     %>
 
-    <div style="margin-top: 20px;">
-        <a href="${pageContext.request.contextPath}/admin/dashboard">Back to Dashboard</a>
+    <div class="button-container">
+        <a href="${pageContext.request.contextPath}/admin/payments?action=record">Record New Subscription</a>
     </div>
 </div>
 </body>

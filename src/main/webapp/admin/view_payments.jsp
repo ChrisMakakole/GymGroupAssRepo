@@ -1,16 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.example.gymproject.model.Payment" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.text.NumberFormat" %>
-<%@ page import="java.util.Locale" %>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>View Payment Details</title>
+  <title>View Subscription Details</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
   <style>
-    #body {
+    body {
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       margin: 0;
@@ -18,7 +16,7 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto;
       background-color: #fff;
       padding: 20px;
@@ -32,35 +30,25 @@
       margin-bottom: 20px;
     }
 
-    .payment-details {
-      margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background-color: #f9f9f9;
-    }
-
-    .detail-item {
+    .detail-row {
       margin-bottom: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
     }
 
-    .detail-label {
+    .detail-row strong {
+      display: inline-block;
+      width: 150px;
       font-weight: bold;
       color: #555;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .detail-value {
-      color: #333;
     }
 
     .button-container {
       margin-top: 20px;
-      text-align: center;
+      text-align: left;
     }
 
-    .back-button {
+    .button-container a {
       display: inline-block;
       padding: 10px 15px;
       text-decoration: none;
@@ -68,70 +56,49 @@
       color: white;
       border-radius: 4px;
       transition: background-color 0.3s ease;
+      margin-right: 10px;
     }
 
-    .back-button:hover {
+    .button-container a:hover {
       background-color: #0056b3;
-    }
-
-    .error-message {
-      color: red;
-      margin-top: 10px;
-      text-align: center;
     }
   </style>
 </head>
-<body id="body">
+<body>
 <div class="container">
-  <h1>Payment Details</h1>
+  <h1>Subscription Details</h1>
 
   <%
     Payment payment = (Payment) request.getAttribute("payment");
-    if (payment == null) {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    if (payment != null) {
   %>
-  <p class="error-message">Payment not found.</p>
+  <div class="detail-row"><strong>Subscription ID:</strong> <%= payment.getPaymentId() %></div>
+  <div class="detail-row"><strong>User Name:</strong> <%= payment.getUserName() %></div>
+  <div class="detail-row"><strong>Package Name:</strong> <%= payment.getPackageName() %></div>
+  <div class="detail-row"><strong>Package Price:</strong> <%= String.format("%.2f", payment.getPackagePrice()) %></div>
+  <div class="detail-row"><strong>Payment Date:</strong> <%= sdf.format(payment.getPaymentDate()) %></div>
+  <div class="detail-row"><strong>Amount Paid:</strong> <%= String.format("%.2f", payment.getAmount()) %></div>
+  <div class="detail-row"><strong>Payment Method:</strong> <%= payment.getPaymentMethod() %></div>
+  <div class="detail-row"><strong>Card Number:</strong> <%= payment.getCardNumber() != null ? payment.getCardNumber() : "-" %></div>
+  <div class="detail-row"><strong>Card Expiry:</strong> <%= payment.getCardExpiry() != null ? payment.getCardExpiry() : "-" %></div>
+  <div class="detail-row"><strong>Cardholder Name:</strong> <%= payment.getCardholderName() != null ? payment.getCardholderName() : "-" %></div>
+  <div class="detail-row"><strong>Payment Type:</strong> <%= payment.getPaymentType() != null ? payment.getPaymentType() : "-" %></div>
+  <div class="detail-row"><strong>Recurring:</strong> <%= payment.isRecurring() ? "Yes" : "No" %></div>
+  <div class="detail-row"><strong>Created At:</strong> <%= payment.getCreatedAt() != null ? sdf.format(payment.getCreatedAt()) : "-" %></div>
+  <div class="detail-row"><strong>Updated At:</strong> <%= payment.getUpdatedAt() != null ? sdf.format(payment.getUpdatedAt()) : "-" %></div>
+
+  <div class="button-container">
+    <a href="${pageContext.request.contextPath}/admin/payments">Back to Subscriptions</a>
+  </div>
   <%
   } else {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault());
   %>
-  <div class="payment-details">
-    <div class="detail-item">
-      <span class="detail-label">Payment ID:</span>
-      <span class="detail-value"><%= payment.getId() %></span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-label">User:</span>
-      <span class="detail-value"><%= payment.getUser().getName() %> (ID: <%= payment.getUserId() %>)</span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-label">Package:</span>
-      <span class="detail-value"><%= payment.getPackage().getName() %> (ID: <%= payment.getPackageId() %>)</span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-label">Payment Date:</span>
-      <span class="detail-value"><%= dateFormat.format(payment.getPaymentDate()) %></span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-label">Amount Paid:</span>
-      <span class="detail-value"><%= currencyFormat.format(payment.getAmount()) %></span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-label">Payment Type:</span>
-      <span class="detail-value"><%= payment.getPaymentType() %></span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-label">Recurring Payment:</span>
-      <span class="detail-value"><%= payment.isRecurring() ? "Yes" : "No" %></span>
-    </div>
-  </div>
+  <p>Subscription not found.</p>
   <%
     }
   %>
-
-  <div class="button-container">
-    <a href="${pageContext.request.contextPath}/admin/payments" class="back-button">Back to Payments</a>
-  </div>
 </div>
 </body>
 </html>

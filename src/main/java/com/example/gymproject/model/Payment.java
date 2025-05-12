@@ -3,66 +3,74 @@ package com.example.gymproject.model;
 import java.sql.Timestamp;
 
 public class Payment {
-    private int id;
-    private int userId;
-    private int packageId;
+    private int paymentId; // Changed from id to paymentId to match DB
+    private String userName; // Changed from userId and now stores name directly
+    private String packageName; // Changed from packageId and now stores name directly
+    private double packagePrice; // Added to store package price
     private Timestamp paymentDate;
     private double amount;
+    private String paymentMethod;
+    private String cardNumber;
+    private String cardExpiry;
+    private String cardholderName;
+    private String cardCvv;
     private String paymentType;
     private boolean recurring;
-
-    // Optional: To hold related User and Package objects for easier access
-    private User user;
-    private Package gymPackage;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     // Default constructor
     public Payment() {
     }
 
-    // Constructor with all fields (excluding related objects)
-    public Payment(int id, int userId, int packageId, Timestamp paymentDate, double amount, String paymentType, boolean recurring) {
-        this.id = id;
-        this.userId = userId;
-        this.packageId = packageId;
+    // Constructor for recording new payments
+    public Payment(String userName, String packageName, double packagePrice, Timestamp paymentDate, double amount, String paymentMethod, String cardNumber, String cardExpiry, String cardholderName, String cardCvv, String paymentType, boolean recurring) {
+        this.userName = userName;
+        this.packageName = packageName;
+        this.packagePrice = packagePrice;
         this.paymentDate = paymentDate;
         this.amount = amount;
-        this.paymentType = paymentType;
-        this.recurring = recurring;
-    }
-
-    // Constructor without ID (for recording new payments)
-    public Payment(int userId, int packageId, Timestamp paymentDate, double amount, String paymentType, boolean recurring) {
-        this.userId = userId;
-        this.packageId = packageId;
-        this.paymentDate = paymentDate;
-        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.cardNumber = cardNumber;
+        this.cardExpiry = cardExpiry;
+        this.cardholderName = cardholderName;
+        this.cardCvv = cardCvv;
         this.paymentType = paymentType;
         this.recurring = recurring;
     }
 
     // Getters and Setters
-    public int getId() {
-        return id;
+
+    public int getPaymentId() {
+        return paymentId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPaymentId(int paymentId) {
+        this.paymentId = paymentId;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public int getPackageId() {
-        return packageId;
+    public String getPackageName() {
+        return packageName;
     }
 
-    public void setPackageId(int packageId) {
-        this.packageId = packageId;
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public double getPackagePrice() {
+        return packagePrice;
+    }
+
+    public void setPackagePrice(double packagePrice) {
+        this.packagePrice = packagePrice;
     }
 
     public Timestamp getPaymentDate() {
@@ -81,6 +89,45 @@ public class Payment {
         this.amount = amount;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    public String getCardExpiry() {
+        return cardExpiry;
+    }
+
+    public void setCardExpiry(String cardExpiry) {
+        this.cardExpiry = cardExpiry;
+    }
+
+    public String getCardholderName() {
+        return cardholderName;
+    }
+
+    public void setCardholderName(String cardholderName) {
+        this.cardholderName = cardholderName;}
+
+    public String getCardCvv() {
+        return cardCvv;
+    }
+
+    public void setCardCvv(String cardCvv) {
+        this.cardCvv = cardCvv;
+    }
+
     public String getPaymentType() {
         return paymentType;
     }
@@ -97,34 +144,40 @@ public class Payment {
         this.recurring = recurring;
     }
 
-    public User getUser() {
-        return user;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Package getPackage() {
-        return gymPackage;
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setPackage(Package gymPackage) {
-        this.gymPackage = gymPackage;
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
     public String toString() {
         return "Payment{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", packageId=" + packageId +
+                "paymentId=" + paymentId +
+                ", userName='" + userName + '\'' +
+                ", packageName='" + packageName + '\'' +
+                ", packagePrice=" + packagePrice +
                 ", paymentDate=" + paymentDate +
                 ", amount=" + amount +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", cardNumber='" + cardNumber + '\'' +
+                ", cardExpiry='" + cardExpiry + '\'' +
+                ", cardholderName='" + cardholderName + '\'' +
+                ", cardCvv='" + cardCvv + '\'' +
                 ", paymentType='" + paymentType + '\'' +
                 ", recurring=" + recurring +
-                ", user=" + (user != null ? user.getName() : null) +
-                ", gymPackage=" + (gymPackage != null ? gymPackage.getName() : null) +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
