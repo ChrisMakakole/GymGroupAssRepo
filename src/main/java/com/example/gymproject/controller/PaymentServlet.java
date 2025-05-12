@@ -15,10 +15,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @WebServlet("/admin/payments")
 public class PaymentServlet extends HttpServlet {
@@ -77,18 +76,106 @@ public class PaymentServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("recordPayment".equals(action)) {
+            // Initialize error list
+            List<String> errors = new ArrayList<>();
+
+            // Get and validate basic payment info
             String userName = request.getParameter("userName");
+            if (userName == null || userName.trim().isEmpty()) {
+                errors.add("User name is required");
+            }
+
             String packageName = request.getParameter("packageName");
-            double packagePrice = Double.parseDouble(request.getParameter("packagePrice"));
-            double amount = Double.parseDouble(request.getParameter("amount"));
+            if (packageName == null || packageName.trim().isEmpty()) {
+                errors.add("Package name is required");
+            }
+
+            double packagePrice = 0;
+            try {
+                packagePrice = Double.parseDouble(request.getParameter("packagePrice"));
+                if (packagePrice <= 0) {
+                    errors.add("Package price must be positive");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Invalid package price format");
+            }
+
+            double amount = 0;
+            try {
+                amount = Double.parseDouble(request.getParameter("amount"));
+                if (amount <= 0) {
+                    errors.add("Amount must be positive");
+                }
+                if (Math.abs(amount - packagePrice) > 0.01) { // Allow small rounding differences
+                    errors.add("Amount must match package price");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Invalid amount format");
+            }
+
             String paymentMethod = request.getParameter("paymentMethod");
-            String cardNumber = request.getParameter("cardNumber");
-            String cardExpiry = request.getParameter("cardExpiry");
-            String cardholderName = request.getParameter("cardholderName");
-            String cardCvv = request.getParameter("cardCvv");
+            if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+                errors.add("Payment method is required");
+            }
+
+            // Validate credit card details if payment method is credit card
+            String cardNumber = null;
+            String cardExpiry = null;
+            String cardholderName = null;
+            String cardCvv = "";
+
+            if ("credit_card".equals(paymentMethod)) {
+                cardNumber = request.getParameter("cardNumber");
+                if (cardNumber == null || !cardNumber.matches("\\d{13,19}")) {
+                    errors.add("Valid card number (13-19 digits) is required");
+                }
+
+                cardExpiry = request.getParameter("expiryDate"); // Note: parameter name consistency
+                if (cardExpiry == null || cardExpiry.trim().isEmpty()) {
+                    errors.add("Card expiry date is required");
+                } else {
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                        Date expiryDate = sdf.parse(cardExpiry);
+                        if (expiryDate.before(new Date())) {
+                            errors.add("Card has expired");
+                        }
+                    } catch (ParseException e) {
+                        errors.add("Invalid expiry date format (use MM/YYYY)");
+                    }
+                }
+
+                cardholderName = request.getParameter("cardholderName");
+                if (cardholderName == null || cardholderName.trim().isEmpty()) {
+                    errors.add("Cardholder name is required");
+                }
+
+                cardCvv = request.getParameter("cvv");
+                if (cardCvv == null || !cardCvv.matches("\\d{3,4}")) {
+                    errors.add("Valid CVV (3-4 digits) is required");
+                }
+            }
+
+            // For other payment methods
             String paymentType = request.getParameter("paymentType");
+            if (!"credit_card".equals(paymentMethod) &&
+                    (paymentType == null || paymentType.trim().isEmpty())) {
+                errors.add("Payment type is required for non-card payments");
+            }
+
             boolean isRecurring = Boolean.parseBoolean(request.getParameter("recurring"));
 
+            // If there are errors, return to form with messages
+            if (!errors.isEmpty()) {
+                request.setAttribute("errorMessages", errors);
+                // Repopulate form data
+                request.setAttribute("users", getAllUsers());
+                request.setAttribute("packages", getAllPackages());
+                request.getRequestDispatcher("/admin/record_payment.jsp").forward(request, response);
+                return;
+            }
+
+            // Create payment object only if validation passes
             Payment newPayment = new Payment();
             newPayment.setUserName(userName);
             newPayment.setPackageName(packageName);
@@ -96,17 +183,31 @@ public class PaymentServlet extends HttpServlet {
             newPayment.setPaymentDate(new Timestamp(System.currentTimeMillis()));
             newPayment.setAmount(amount);
             newPayment.setPaymentMethod(paymentMethod);
-            newPayment.setCardNumber(cardNumber);
-            newPayment.setCardExpiry(cardExpiry);
-            newPayment.setCardholderName(cardholderName);
-            newPayment.setCardCvv(cardCvv);
-            newPayment.setPaymentType(paymentType);
+
+            // Only set card details if payment method is credit card
+            if ("credit_card".equals(paymentMethod)) {
+                // Mask card number before storage (only store last 4 digits)
+                String maskedCardNumber = "****" + cardNumber.substring(cardNumber.length() - 4);
+                newPayment.setCardNumber(maskedCardNumber);
+                newPayment.setCardExpiry(cardExpiry);
+                newPayment.setCardholderName(cardholderName);
+                // Don't store CVV - it's only for authorization
+                newPayment.setCardCvv(cardCvv);
+            } else {
+                newPayment.setPaymentType(paymentType);
+            }
+
             newPayment.setRecurring(isRecurring);
 
-            recordPayment(newPayment, "payments");
-            response.sendRedirect(request.getContextPath() + "/admin/payments");
+            try {
+                recordPayment(newPayment, "payments");
+                response.sendRedirect(request.getContextPath() + "/admin/payments");
+            } catch (Exception e) {
+                errors.add("Failed to record payment: " + e.getMessage());
+                request.setAttribute("errorMessages", errors);
+                request.getRequestDispatcher("/admin/record_payment.jsp").forward(request, response);
+            }
         }
-        // You might add logic for updating or deleting payments here if needed
     }
 
     private void processAutoPayment() {
@@ -142,7 +243,7 @@ public class PaymentServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "SELECT * FROM subscriptions WHERE is_recurring = TRUE";
+            String sql = "SELECT * FROM payments WHERE is_recurring = TRUE";
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
 

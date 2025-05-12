@@ -10,14 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55f8a36e-9560-4854-b011-0dae4ece9a65" name="Changes" comment="init app">
-      <change beforePath="$PROJECT_DIR$/.idea/webContexts.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webContexts.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/PaymentServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/controller/PaymentServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/gymproject/model/Payment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/Docs/dbscript.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/Docs/dbscript.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/admin/manage_payments.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/admin/manage_payments.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/admin/record_payment.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/admin/record_payment.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/admin/view_payments.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/admin/view_payments.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,7 +188,8 @@
       <workItem from="1746624134018" duration="3188000" />
       <workItem from="1746863662176" duration="8968000" />
       <workItem from="1746876053747" duration="8985000" />
-      <workItem from="1747047225961" duration="10560000" />
+      <workItem from="1747047225961" duration="10586000" />
+      <workItem from="1747058711706" duration="6169000" />
     </task>
     <task id="LOCAL-00001" summary="init app">
       <created>1745413426664</created>
@@ -273,7 +268,14 @@
       <option name="project" value="LOCAL" />
       <updated>1746885517088</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="init app">
+      <created>1747058681971</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1747058681971</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
