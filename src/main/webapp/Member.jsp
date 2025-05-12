@@ -281,7 +281,7 @@
         const query = this.value.trim();
 
         if (query.length === 0) {
-            resultsContainer.innerHTML = '';
+            resultsContainer.innerHTML = 'searching...';
             return;
         }
 

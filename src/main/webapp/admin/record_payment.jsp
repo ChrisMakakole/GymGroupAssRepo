@@ -48,6 +48,7 @@
     select,
     input[type="text"],
     input[type="number"],
+    input[type="month"],
     input[type="checkbox"] {
       width: calc(100% - 12px);
       padding: 10px;
@@ -97,6 +98,56 @@
       color: red;
       margin-top: 10px;
       text-align: center;
+    }
+
+    /* Card Payment Styles */
+    .payment-method-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .payment-tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #f1f1f1;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      margin-right: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .payment-tab.active {
+      background-color: #fff;
+      border-bottom: 1px solid #fff;
+      margin-bottom: -1px;
+    }
+
+    .payment-content {
+      display: none;
+    }
+
+    .payment-content.active {
+      display: block;
+    }
+
+    .card-icons {
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .card-icons img {
+      margin: 0 5px;
+      height: 30px;
+    }
+
+    .card-form-group {
+      margin-bottom: 15px;
+    }
+
+    small {
+      color: #666;
+      font-size: 0.8em;
     }
   </style>
 </head>
@@ -157,9 +208,49 @@
       <input type="number" id="amount" name="amount" step="0.01" required>
     </div>
 
+    <!-- Payment Method Selection -->
     <div class="form-group">
-      <label for="paymentType">Payment Type:</label>
-      <input type="text" id="paymentType" name="paymentType">
+      <label>Payment Method:</label>
+      <div class="payment-method-tabs">
+        <div class="payment-tab active" onclick="showPaymentTab('card')">Credit/Debit Card</div>
+      </div>
+    </div>
+
+    <!-- Card Payment Form -->
+    <div id="cardPayment" class="payment-content active">
+      <div class="card-form-group">
+        <label for="cardNumber">Card Number:</label>
+        <input type="text" id="cardNumber" name="cardNumber" pattern="\d{16}" maxlength="16" 
+               placeholder="1200003334320000" required>
+        <div class="card-icons">
+          <img src="${pageContext.request.contextPath}/images/Amex1.png" alt="American Express">
+          <img src="${pageContext.request.contextPath}/images/masterM.png" alt="Mastercard">
+          <img src="${pageContext.request.contextPath}/images/visa.png" alt="Visa">
+        </div>
+      </div>
+
+      <div class="card-form-group">
+        <label for="expiryDate">Expiry Month & Year:</label>
+        <input type="month" id="expiryDate" name="expiryDate" min="<%= new SimpleDateFormat("yyyy-MM").format(new Date()) %>" required>
+      </div>
+
+      <div class="card-form-group">
+        <label for="cardholderName">Cardholder Name:</label>
+        <input type="text" id="cardholderName" name="cardholderName" pattern="[A-Za-z\s]+" placeholder="Name" required>
+      </div>
+
+      <div class="card-form-group">
+        <label for="cvv">CVV:</label>
+        <input type="number" id="cvv" name="cvv" min="100" max="999"  placeholder="849" required>
+      </div>
+    </div>
+
+    <!-- Other Payment Form -->
+    <div id="otherPayment" class="payment-content">
+      <div class="form-group">
+        <label for="paymentType">Payment Type:</label>
+        <input type="text" id="paymentType" name="paymentType" placeholder="e.g., Bank Transfer, Cash">
+      </div>
     </div>
 
     <div class="form-group">
@@ -173,5 +264,32 @@
     </div>
   </form>
 </div>
+
+<script>
+  function showPaymentTab(tabName) {
+    // Hide all payment content sections
+    document.querySelectorAll('.payment-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    
+    // Show the selected payment content
+    document.getElementById(tabName + 'Payment').classList.add('active');
+    
+    // Update tab styling
+    document.querySelectorAll('.payment-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+  }
+  
+  // Auto-fill amount when package is selected
+  document.getElementById('packageId').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    if (selectedOption.text.includes('(')) {
+      const price = selectedOption.text.match(/\(([^)]+)\)/)[1];
+      document.getElementById('amount').value = parseFloat(price.replace(/[^\d.]/g, ''));
+    }
+  });
+</script>
 </body>
 </html>

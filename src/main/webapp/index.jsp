@@ -140,7 +140,7 @@
       </a>
     </li>
     <li>
-      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/payments')">
+      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/manage_payments.jsp')">
         <i class='bx bx-list-ul'></i>
         <span class="links_name">Manage Payments</span>
       </a>

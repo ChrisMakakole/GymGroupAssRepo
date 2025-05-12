@@ -107,7 +107,7 @@
 
     <div class="record-button-container">
 <%--        <a href="${pageContext.request.contextPath}/admin/payments?action=record" class="record-button">Record New Payment</a>--%>
-        <button class="record-button" onclick="loadContent('admin/payments?action=record')">Record New Payment</button>
+        <button class="record-button" onclick="loadContent('admin/record_payment.jsp')">Record New Payment</button>
     </div>
 
     <%
