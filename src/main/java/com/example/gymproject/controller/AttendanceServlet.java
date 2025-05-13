@@ -66,9 +66,9 @@ public class AttendanceServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "INSERT INTO attendance (user_id, attendance_date, check_in_time) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO attendance (phone, attendance_date, check_in_time) VALUES (?, ?, ?)";
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, attendance.getUserId());
+            preparedStatement.setInt(1, attendance.getUserId());  //still using userId in attendance object.
             preparedStatement.setDate(2, attendance.getAttendanceDate());
             preparedStatement.setTimestamp(3, attendance.getCheckInTime());
             preparedStatement.executeUpdate();
@@ -107,14 +107,15 @@ public class AttendanceServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "SELECT a.*, u.name AS user_name FROM attendance a JOIN users u ON a.user_id = u.id ORDER BY a.attendance_date DESC, a.check_in_time DESC";
+            // Corrected SQL: Join on a.phone = u.phone
+            String sql = "SELECT a.*, u.name AS user_name FROM attendance a JOIN users u ON a.phone = u.phone ORDER BY a.attendance_date DESC, a.check_in_time DESC";
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 Attendance attendance = new Attendance();
                 attendance.setId(resultSet.getInt("id"));
-                attendance.setUserId(resultSet.getInt("user_id"));
+                attendance.setUserId(resultSet.getInt("phone")); //changed to phone
                 attendance.setAttendanceDate(resultSet.getDate("attendance_date"));
                 attendance.setCheckInTime(resultSet.getTimestamp("check_in_time"));
                 attendance.setCheckOutTime(resultSet.getTimestamp("check_out_time"));
@@ -163,3 +164,4 @@ public class AttendanceServlet extends HttpServlet {
         return users;
     }
 }
+

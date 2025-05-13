@@ -1,25 +1,36 @@
 package com.example.gymproject.model;
 
+import java.sql.Date;
+
 public class Trainer {
     private int id;
     private String name;
-    private String specialization;
+    private String phone;
+    private String email;
+    private String trainingType;
+    private Date registrationDate;
 
     // Default constructor
     public Trainer() {
     }
 
     // Constructor with all fields
-    public Trainer(int id, String name, String specialization) {
+    public Trainer(int id, String name, String phone, String email, String trainingType, Date registrationDate) {
         this.id = id;
         this.name = name;
-        this.specialization = specialization;
+        this.phone = phone;
+        this.email = email;
+        this.trainingType = trainingType;
+        this.registrationDate = registrationDate;
     }
 
     // Constructor without ID (for adding new trainers)
-    public Trainer(String name, String specialization) {
+    public Trainer(String name, String phone, String email, String trainingType, Date registrationDate) {
         this.name = name;
-        this.specialization = specialization;
+        this.phone = phone;
+        this.email = email;
+        this.trainingType = trainingType;
+        this.registrationDate = registrationDate;
     }
 
     // Getters and Setters
@@ -39,12 +50,36 @@ public class Trainer {
         this.name = name;
     }
 
-    public String getSpecialization() {
-        return specialization;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTrainingType() {
+        return trainingType;
+    }
+
+    public void setTrainingType(String trainingType) {
+        this.trainingType = trainingType;
+    }
+
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
     @Override
@@ -52,7 +87,11 @@ public class Trainer {
         return "Trainer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", specialization='" + specialization + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", trainingType='" + trainingType + '\'' +
+                ", registrationDate=" + registrationDate +
                 '}';
     }
 }
+

@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Date; // Import for java.sql.Date
 
 @WebServlet("/admin/trainers")
 public class TrainerServlet extends HttpServlet {
@@ -45,18 +46,24 @@ public class TrainerServlet extends HttpServlet {
 
         if ("add".equals(action)) {
             String name = request.getParameter("name");
-            String specialization = request.getParameter("specialization");
+            String phone = request.getParameter("phone");
+            String email = request.getParameter("email");
+            String trainingType = request.getParameter("trainingType");
+            Date registrationDate = Date.valueOf(request.getParameter("registrationDate")); // Convert to java.sql.Date
 
-            Trainer newTrainer = new Trainer(name, specialization);
+            Trainer newTrainer = new Trainer(name, phone, email, trainingType, registrationDate);
             addTrainer(newTrainer);
             response.sendRedirect(request.getContextPath() + "/admin/trainers");
 
         } else if ("update".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             String name = request.getParameter("name");
-            String specialization = request.getParameter("specialization");
+            String phone = request.getParameter("phone");
+            String email = request.getParameter("email");
+            String trainingType = request.getParameter("trainingType");
+            Date registrationDate = Date.valueOf(request.getParameter("registrationDate")); // Convert to java.sql.Date
 
-            Trainer updatedTrainer = new Trainer(id, name, specialization);
+            Trainer updatedTrainer = new Trainer(id, name, phone, email, trainingType, registrationDate);
             updateTrainer(updatedTrainer);
             response.sendRedirect(request.getContextPath() + "/admin/trainers");
         }
@@ -78,7 +85,10 @@ public class TrainerServlet extends HttpServlet {
                 Trainer trainer = new Trainer();
                 trainer.setId(resultSet.getInt("id"));
                 trainer.setName(resultSet.getString("name"));
-                trainer.setSpecialization(resultSet.getString("specialization"));
+                trainer.setPhone(resultSet.getString("phone"));
+                trainer.setEmail(resultSet.getString("email"));
+                trainer.setTrainingType(resultSet.getString("training_type"));
+                trainer.setRegistrationDate(resultSet.getDate("registration_date"));
                 trainers.add(trainer);
             }
         } catch (SQLException e) {
@@ -108,7 +118,10 @@ public class TrainerServlet extends HttpServlet {
                 trainer = new Trainer();
                 trainer.setId(resultSet.getInt("id"));
                 trainer.setName(resultSet.getString("name"));
-                trainer.setSpecialization(resultSet.getString("specialization"));
+                trainer.setPhone(resultSet.getString("phone"));
+                trainer.setEmail(resultSet.getString("email"));
+                trainer.setTrainingType(resultSet.getString("training_type"));
+                trainer.setRegistrationDate(resultSet.getDate("registration_date"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,10 +139,13 @@ public class TrainerServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "INSERT INTO trainers (name, specialization) VALUES (?, ?)";
+            String sql = "INSERT INTO trainers (name, phone, email, training_type, registration_date) VALUES (?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, trainer.getName());
-            preparedStatement.setString(2, trainer.getSpecialization());
+            preparedStatement.setString(2, trainer.getPhone());
+            preparedStatement.setString(3, trainer.getEmail());
+            preparedStatement.setString(4, trainer.getTrainingType());
+            preparedStatement.setDate(5, trainer.getRegistrationDate()); // Use setDate for java.sql.Date
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -145,11 +161,14 @@ public class TrainerServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "UPDATE trainers SET name = ?, specialization = ? WHERE id = ?";
+            String sql = "UPDATE trainers SET name = ?, phone = ?, email = ?, training_type = ?, registration_date = ? WHERE id = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, trainer.getName());
-            preparedStatement.setString(2, trainer.getSpecialization());
-            preparedStatement.setInt(3, trainer.getId());
+            preparedStatement.setString(2, trainer.getPhone());
+            preparedStatement.setString(3, trainer.getEmail());
+            preparedStatement.setString(4, trainer.getTrainingType());
+            preparedStatement.setDate(5, trainer.getRegistrationDate()); // Use setDate for java.sql.Date
+            preparedStatement.setInt(6, trainer.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -177,3 +196,4 @@ public class TrainerServlet extends HttpServlet {
         }
     }
 }
+

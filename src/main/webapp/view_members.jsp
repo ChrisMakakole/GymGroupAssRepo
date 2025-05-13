@@ -112,8 +112,6 @@
           String memberPhone = rs.getString("phone");
           Date startDate = rs.getDate("membership_start_date");
           Date endDate = rs.getDate("membership_end_date");
-          // You would need to add a status column to your table or manage it separately
-          String status = rs.getString("attendance"); // Default status
     %>
     <tr>
       <td><%= memberName %></td>

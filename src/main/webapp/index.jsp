@@ -122,7 +122,7 @@
       </a>
     </li>
     <li>
-      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/trainer_shifts')">
+      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/attendance')">
         <i class='bx bx-list-ul'></i>
         <span class="links_name">view Attendance</span>
       </a>
@@ -140,7 +140,7 @@
       </a>
     </li>
     <li>
-      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/manage_payments.jsp')">
+      <a href="#" onclick="loadContent('${pageContext.request.contextPath}/admin/payments')">
         <i class='bx bx-list-ul'></i>
         <span class="links_name">Manage Payments</span>
       </a>

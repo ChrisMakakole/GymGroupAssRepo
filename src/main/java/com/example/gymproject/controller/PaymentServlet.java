@@ -227,7 +227,6 @@ public class PaymentServlet extends HttpServlet {
             newSubscription.setCardExpiry(subscription.getCardExpiry());
             newSubscription.setCardholderName(subscription.getCardholderName());
             newSubscription.setCardCvv(subscription.getCardCvv());
-            newSubscription.setPaymentType("Automatic Recurring (Simulated)");
             newSubscription.setRecurring(true); // Still using recurring flag
 
             recordPayment(newSubscription, "subscriptions");

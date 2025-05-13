@@ -8,7 +8,7 @@
   <title>View Subscription Details</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
   <style>
-    body {
+    #body {
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       margin: 0;
@@ -64,7 +64,7 @@
     }
   </style>
 </head>
-<body>
+<body id="body">
 <div class="container">
   <h1>Subscription Details</h1>
 
